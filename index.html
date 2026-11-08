@@ -954,7 +954,7 @@ const STAGES = [
       { t: "Switch to the app you used just before (TextEdit).", k: "cmd Tab", goal: S => S.front === "textedit" },
       { t: "Switch back to Safari.", k: "cmd Tab", goal: S => S.front === "safari" },
       { t: "Open Spotlight.", k: "cmd Space", goal: S => S.overlay === "spotlight" },
-      { t: "Type Finder and press Return to open it.", keep: true, type: true, hint: () => typeHint("Finder"), solve(S) { S.overlay = "spotlight"; S.input = "spotlight"; S.inputText = "Finder"; dispatch(S, "Return", parse("Return")); }, goal: (S, ev) => ev === EV.launch && S.front === "finder" },
+      { t: "Type Finder and press Return to open it.", keep: true, type: true, hint: () => typeHint("Finder"), solve(S) { S.overlay = "spotlight"; S.input = "spotlight"; S.inputText = "Finder"; return dispatch(S, "Return", parse("Return")); }, goal: (S, ev) => ev === EV.launch && S.front === "finder" },
       { t: "Hide Finder.", k: "cmd H", pre(S) { activate(S, "finder"); }, goal: S => A(S, "finder").hidden },
       { t: "Hide every app except the one in front.", k: "opt cmd H", pre(S) { for (const k in S.apps) S.apps[k].hidden = false; activate(S, "safari"); }, goal: S => Object.keys(S.apps).every(k => k === S.front || !A(S, k).running || A(S, k).hidden) },
       { t: "Minimize this window to the Dock.", k: "cmd M", pre(S) { ensure(S, "safari", () => mkSafari([TABS5[0]])); }, goal: S => A(S, S.front).min.length > 0 },
@@ -1065,7 +1065,7 @@ function showMe() {
   let ok = false;
   if (parts) {
     for (const p of parts) { const c = parse(p); ok = act(cid(c.mods, c.key), c, true) || ok; if (ok) break; }
-  } else { t.solve(S); try { ok = !!t.goal(S, null, X); } catch {} render(); }
+  } else { const ev = t.solve(S); try { ok = !!t.goal(S, ev || null, X); } catch {} render(); }
   if (!ok) { try { ok = !!t.goal(S, null, X); } catch {} }
   fb = { cls: ok ? "good" : "", html: ok ? "✓ That's how it's done. Moving on." : "Did it for you. Try the hint." };
   if (ok) { advancing = true; render(); setTimeout(() => { step++; step >= stage().tasks.length ? finishStage() : startStep(); }, 1200); }
