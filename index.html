@@ -1,548 +1,1337 @@
-<title>Mac Shortcut Trainer</title>
+<title>Shortcut Parcours</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: one centered study column — stats strip, deck chips, the card with its live keycap slot, then on-screen keys and a cheat sheet. */
+/* Layout: mission brief on top (stage, step, task), the simulated Mac below it, then the on-screen key pad and the full shortcut list. */
 :root {
-  --bg: #eceef2;
-  --surface: #fbfbfc;
-  --ink: #15171c;
-  --muted: #5a6070;
-  --line: #d5d9e1;
-  --accent: #3d4fd1;
-  --accent-ink: #ffffff;
-  --key: #1c1e23;
-  --key-edge: #000000;
-  --key-ink: #f1f2f5;
-  --good: #1f8a45;
-  --good-bg: #e2f4e8;
-  --bad: #c43c3c;
-  --bad-bg: #fbe6e6;
+  --bg: #e9ecf1; --surface: #fbfbfc; --ink: #15171c; --muted: #5a6070; --line: #d4d8e0;
+  --accent: #3d4fd1; --accent-ink: #ffffff;
+  --key: #1c1e23; --key-edge: #000000; --key-ink: #f1f2f5;
+  --good: #1f8a45; --good-bg: #e2f4e8; --bad: #b8452f; --bad-bg: #fbe9e3; --warn-bg: #f4efe0;
+  /* simulated Mac */
+  --wall-a: #7f9cc9; --wall-b: #c9a2b8; --wall-c: #e8c7a4;
+  --win: #ffffff; --win-bar: #ececef; --win-line: #d9d9de; --win-ink: #1d1d1f; --win-muted: #8a8a91;
+  --mac-sel: #0a63d6; --mac-sel-ink: #ffffff; --text-sel: #b4d3fb; --hit: #ffe56b;
+  --menubar: rgba(246,246,248,0.78); --dock: rgba(246,246,248,0.55); --scrim: rgba(20,22,30,0.35);
   --f-display: "Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
   --f-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  --f-glyph: -apple-system, "SF Pro Text", system-ui, "Segoe UI Symbol", sans-serif;
+  --f-mac: -apple-system, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111317; --surface: #1a1d23; --ink: #e8eaee; --muted: #99a0ad; --line: #2b3039;
-    --accent: #8d98ff; --accent-ink: #0f1220; --key: #2a2e36; --key-edge: #0a0b0d; --key-ink: #f1f2f5;
-    --good: #5fd08a; --good-bg: #16301f; --bad: #ff7b7b; --bad-bg: #3a1a1c; color-scheme: dark;
+    --bg: #101216; --surface: #1a1d23; --ink: #e8eaee; --muted: #99a0ad; --line: #2b3039;
+    --accent: #8d98ff; --accent-ink: #0f1220; --key: #2a2e36; --key-edge: #08090b; --key-ink: #f1f2f5;
+    --good: #5fd08a; --good-bg: #16301f; --bad: #ff8a70; --bad-bg: #3a1f19; --warn-bg: #2d2a1d;
+    --wall-a: #23345a; --wall-b: #4a2f4f; --wall-c: #6b4a3a;
+    --win: #1f1f23; --win-bar: #2b2b30; --win-line: #3a3a40; --win-ink: #ececf0; --win-muted: #8f8f98;
+    --mac-sel: #2a6fd8; --mac-sel-ink: #ffffff; --text-sel: #3a5a86; --hit: #8a7420;
+    --menubar: rgba(30,30,34,0.72); --dock: rgba(40,40,46,0.55); --scrim: rgba(0,0,0,0.45);
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111317; --surface: #1a1d23; --ink: #e8eaee; --muted: #99a0ad; --line: #2b3039;
-  --accent: #8d98ff; --accent-ink: #0f1220; --key: #2a2e36; --key-edge: #0a0b0d; --key-ink: #f1f2f5;
-  --good: #5fd08a; --good-bg: #16301f; --bad: #ff7b7b; --bad-bg: #3a1a1c; color-scheme: dark;
+  --bg: #101216; --surface: #1a1d23; --ink: #e8eaee; --muted: #99a0ad; --line: #2b3039;
+  --accent: #8d98ff; --accent-ink: #0f1220; --key: #2a2e36; --key-edge: #08090b; --key-ink: #f1f2f5;
+  --good: #5fd08a; --good-bg: #16301f; --bad: #ff8a70; --bad-bg: #3a1f19; --warn-bg: #2d2a1d;
+  --wall-a: #23345a; --wall-b: #4a2f4f; --wall-c: #6b4a3a;
+  --win: #1f1f23; --win-bar: #2b2b30; --win-line: #3a3a40; --win-ink: #ececf0; --win-muted: #8f8f98;
+  --mac-sel: #2a6fd8; --mac-sel-ink: #ffffff; --text-sel: #3a5a86; --hit: #8a7420;
+  --menubar: rgba(30,30,34,0.72); --dock: rgba(40,40,46,0.55); --scrim: rgba(0,0,0,0.45);
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body {
   background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 64px;
 }
-.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; }
-h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 5vw, 34px); line-height: 1.05; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
-h1 .glyph { font-family: var(--f-glyph); color: var(--accent); font-weight: 600; }
-.stats { display: flex; gap: 18px; font-variant-numeric: tabular-nums; }
-.stat { display: flex; flex-direction: column; align-items: flex-end; }
-.stat b { font-family: var(--f-mono); font-size: 18px; font-weight: 600; }
-.stat span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip {
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 4vw, 32px); line-height: 1.05; margin: 0; letter-spacing: -0.01em; }
+h1 .glyph { font-family: var(--f-mac); color: var(--accent); }
+header a { color: var(--muted); font-size: 14px; }
+.stages { display: flex; flex-wrap: wrap; gap: 8px; }
+.stage-chip {
   font: 500 13px/1 var(--f-body); color: var(--ink); background: transparent; border: 1px solid var(--line);
   border-radius: 999px; padding: 8px 12px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center;
 }
-.chip .n { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
-.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.chip[aria-pressed="true"] .n { color: var(--bg); opacity: 0.7; }
+.stage-chip .stars { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+.stage-chip .stars b { color: var(--accent); font-weight: 400; }
+.stage-chip[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.stage-chip[aria-current="true"] .stars, .stage-chip[aria-current="true"] .stars b { color: var(--bg); }
 
-.card {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-  padding: clamp(20px, 4vw, 36px); display: flex; flex-direction: column; gap: 22px; position: relative;
-}
-.card.good { border-color: var(--good); }
-.card.bad { border-color: var(--bad); }
-.eyebrow { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; }
-.action { font-family: var(--f-display); font-weight: 500; font-size: clamp(24px, 5vw, 36px); line-height: 1.15; margin: 0; text-wrap: balance; }
-.note { color: var(--muted); font-size: 14px; margin: -10px 0 0; }
-
-.slot { min-height: 64px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border: 1.5px dashed var(--line); border-radius: 10px; }
-.slot .placeholder { color: var(--muted); font-size: 14px; }
-.slot.held { border-color: var(--accent); }
+.brief { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.brief.done { border-color: var(--good); }
+.brief-top { display: flex; justify-content: space-between; gap: 12px; font: 600 11px/1.2 var(--f-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.dots { display: flex; gap: 4px; flex-wrap: wrap; }
+.dots i { width: 18px; height: 4px; border-radius: 2px; background: var(--line); }
+.dots i.ok { background: var(--good); }
+.dots i.now { background: var(--accent); }
+.task { font-family: var(--f-display); font-weight: 500; font-size: clamp(20px, 3.2vw, 27px); line-height: 1.2; margin: 0; text-wrap: balance; }
+.fb { font-size: 14px; min-height: 1.5em; color: var(--muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fb.good { color: var(--good); font-weight: 600; }
+.fb.bad { color: var(--bad); }
+.hintline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--warn-bg); border-radius: 8px; padding: 8px 10px; font-size: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { font: 600 13px/1 var(--f-body); border-radius: 8px; padding: 10px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:focus-visible, .stage-chip:focus-visible, .pad button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.result { display: flex; flex-wrap: wrap; gap: 20px; font-variant-numeric: tabular-nums; }
+.result div { display: flex; flex-direction: column; }
+.result b { font: 600 20px/1.2 var(--f-mono); }
+.result span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.bigstars { font-size: 26px; letter-spacing: 4px; color: var(--accent); }
 
 kbd, .kc {
-  font-family: var(--f-glyph); font-size: 17px; font-weight: 500; color: var(--key-ink); background: var(--key);
-  min-width: 40px; height: 40px; padding: 0 10px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--f-mac); font-size: 16px; font-weight: 500; color: var(--key-ink); background: var(--key);
+  min-width: 38px; height: 38px; padding: 0 9px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center;
   box-shadow: 0 2px 0 var(--key-edge), inset 0 1px 0 rgba(255,255,255,0.08); white-space: nowrap;
 }
-kbd.small { font-size: 13px; min-width: 28px; height: 28px; padding: 0 6px; }
-.kc.word { font-size: 13px; letter-spacing: 0.02em; }
-.plus { color: var(--muted); font-size: 13px; }
+kbd.s, .kc.s { font-size: 12px; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 5px; box-shadow: 0 1px 0 var(--key-edge); }
+.kc.word { font-size: 12px; }
+.combo { display: inline-flex; gap: 3px; align-items: center; }
+.or { color: var(--muted); font-size: 12px; }
 
-.verdict { border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-.verdict.good { background: var(--good-bg); color: var(--good); }
-.verdict.bad { background: var(--bad-bg); color: var(--bad); }
-.verdict .line { font-weight: 600; }
-.verdict .answers { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--ink); }
-.verdict .combo { display: inline-flex; gap: 6px; align-items: center; }
-.verdict .or { color: var(--muted); font-size: 13px; }
-.verdict .practice { color: var(--ink); font-size: 14px; font-weight: 400; }
-
-.actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.btn {
-  font: 600 14px/1 var(--f-body); border-radius: 9px; padding: 11px 16px; cursor: pointer;
-  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+/* ---------- the simulated Mac ---------- */
+.screen-wrap { container-type: inline-size; }
+.screen {
+  position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; isolation: isolate;
+  background: radial-gradient(120% 90% at 15% 10%, var(--wall-a), transparent 60%), radial-gradient(90% 80% at 90% 90%, var(--wall-c), transparent 60%), var(--wall-b);
+  font-family: var(--f-mac); font-size: clamp(6px, 1.22cqw, 13px); color: var(--win-ink); line-height: 1.35;
+  box-shadow: 0 0 0 1px var(--line), 0 12px 40px rgba(0,0,0,0.18); user-select: none;
 }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn:focus-visible, .chip:focus-visible, .pad button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.screen.flash::after { content: ""; position: absolute; inset: 0; background: #fff; animation: flash 0.35s ease-out forwards; z-index: 90; pointer-events: none; }
+@keyframes flash { from { opacity: 0.95; } to { opacity: 0; } }
+.menubar { position: absolute; inset: 0 0 auto; height: 2em; display: flex; align-items: center; gap: 1.4em; padding: 0 1em; background: var(--menubar); backdrop-filter: blur(20px); z-index: 30; font-size: 1em; }
+.menubar b { font-weight: 700; }
+.menubar .right { margin-left: auto; display: flex; gap: 1.2em; color: var(--win-ink); }
+.menubar .space-pill { font-size: 0.85em; padding: 0.1em 0.6em; border-radius: 1em; background: var(--win-line); }
+.desk-icons { position: absolute; right: 1.2em; top: 3em; display: flex; flex-direction: column; gap: 1em; align-items: center; z-index: 1; }
+.desk-icon { width: 7em; display: flex; flex-direction: column; align-items: center; gap: 0.3em; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.6); font-size: 0.9em; text-align: center; word-break: break-word; }
+.desk-icon .doc { width: 3em; height: 3.7em; background: #fff; border-radius: 0.25em; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.desk-icon .doc.img { background: linear-gradient(160deg, #7fb8e8, #f2c48b); }
+.space-label { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); color: #fff; font-size: 2.2em; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.4); opacity: 0.85; }
 
-.pad { display: flex; flex-direction: column; gap: 10px; }
-.pad-label { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
-.pad-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.win { position: absolute; background: var(--win); border-radius: 0.8em; box-shadow: 0 0 0 1px rgba(0,0,0,0.12), 0 1.2em 3em rgba(0,0,0,0.28); display: flex; flex-direction: column; overflow: hidden; z-index: 10; }
+.win.bg { z-index: 5; filter: saturate(0.85); }
+.win.bg::after { content: ""; position: absolute; inset: 0; background: var(--win); opacity: 0.25; }
+.win.full { border-radius: 0; z-index: 40; }
+.titlebar { display: flex; align-items: center; gap: 0.8em; padding: 0 0.9em; height: 2.6em; background: var(--win-bar); border-bottom: 1px solid var(--win-line); flex-shrink: 0; }
+.lights { display: flex; gap: 0.45em; }
+.lights i { width: 0.95em; height: 0.95em; border-radius: 50%; background: #ff5f57; display: block; }
+.lights i:nth-child(2) { background: #febc2e; }
+.lights i:nth-child(3) { background: #28c840; }
+.win.bg .lights i { background: var(--win-line); }
+.titlebar .ttl { flex: 1; text-align: center; font-weight: 600; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.titlebar .ttl small { font-weight: 400; color: var(--win-muted); }
+.navbtns { color: var(--win-muted); letter-spacing: 0.4em; }
+
+/* Safari */
+.addr { flex: 1; max-width: 30em; margin: 0 auto; height: 1.8em; border-radius: 0.5em; background: var(--win); border: 1px solid var(--win-line); display: flex; align-items: center; justify-content: center; padding: 0 0.7em; color: var(--win-muted); font-size: 0.92em; overflow: hidden; white-space: nowrap; }
+.addr.focus { border-color: var(--mac-sel); box-shadow: 0 0 0 0.2em color-mix(in srgb, var(--mac-sel) 30%, transparent); justify-content: flex-start; color: var(--win-ink); }
+.addr .selurl { background: var(--text-sel); color: var(--win-ink); }
+.priv .titlebar { background: #3a3a40; color: #eee; }
+.priv .addr { background: #2a2a2e; color: #bbb; border-color: #555; }
+.tabs { display: flex; gap: 1px; background: var(--win-line); border-bottom: 1px solid var(--win-line); flex-shrink: 0; }
+.tab { flex: 1; min-width: 0; padding: 0.45em 0.8em; background: var(--win-bar); color: var(--win-muted); font-size: 0.88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer; }
+.tab.on { background: var(--win); color: var(--win-ink); font-weight: 600; }
+.bookmarks { display: flex; gap: 1.2em; padding: 0.3em 1em; font-size: 0.85em; color: var(--win-muted); border-bottom: 1px solid var(--win-line); }
+.findbar { display: flex; align-items: center; gap: 0.6em; padding: 0.35em 0.9em; border-bottom: 1px solid var(--win-line); background: var(--win-bar); font-size: 0.9em; }
+.findbar .q { flex: 0 1 18em; min-height: 1.6em; border: 1px solid var(--mac-sel); border-radius: 0.4em; padding: 0.1em 0.5em; background: var(--win); }
+.findbar .q.idle { border-color: var(--win-line); }
+.page { flex: 1; overflow: hidden; padding: 1.6em 2.2em; position: relative; }
+.page h2 { margin: 0 0 0.6em; font-size: 2em; line-height: 1.15; }
+.page .bar { height: 0.6em; border-radius: 0.3em; background: var(--win-line); margin: 0.6em 0; }
+.page .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em; margin-top: 1em; }
+.page .tiles div { aspect-ratio: 1; border-radius: 0.8em; background: var(--win-bar); display: flex; align-items: end; justify-content: center; padding: 0.4em; font-size: 0.85em; color: var(--win-muted); }
+.loading { position: absolute; inset: 0 0 auto; height: 0.25em; background: var(--mac-sel); animation: load 0.6s ease-out; }
+@keyframes load { from { width: 0; } to { width: 100%; } }
+.devtools { height: 34%; border-top: 1px solid var(--win-line); background: var(--win-bar); font-family: var(--f-mono); font-size: 0.85em; padding: 0.5em 0.9em; flex-shrink: 0; }
+.devtools .dtabs { display: flex; gap: 1.4em; color: var(--win-muted); margin-bottom: 0.5em; }
+.devtools .dtabs b { color: var(--mac-sel); }
+.history li { padding: 0.35em 0; border-bottom: 1px solid var(--win-line); list-style: none; }
+.history ul { padding: 0; margin: 0; }
+
+/* TextEdit */
+.toolbar { display: flex; gap: 0.6em; align-items: center; padding: 0.35em 0.9em; border-bottom: 1px solid var(--win-line); font-size: 0.85em; color: var(--win-muted); flex-shrink: 0; }
+.toolbar span { border: 1px solid var(--win-line); border-radius: 0.35em; padding: 0.05em 0.5em; }
+.doc-body { flex: 1; padding: 1.4em 2em; font-family: "Helvetica Neue", Helvetica, var(--f-mac); font-size: 1.15em; line-height: 1.55; white-space: pre-wrap; overflow: hidden; word-break: break-word; }
+.doc-body .s { background: var(--text-sel); }
+.doc-body .h { background: var(--hit); }
+.doc-body .b { font-weight: 700; }
+.doc-body .i { font-style: italic; }
+.doc-body .u { text-decoration: underline; }
+.caret { display: inline-block; width: 0; height: 1.2em; vertical-align: text-bottom; border-left: 0.12em solid var(--mac-sel); margin-right: -0.12em; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Finder */
+.fbody { flex: 1; display: flex; min-height: 0; }
+.sidebar { width: 11em; flex-shrink: 0; background: var(--win-bar); border-right: 1px solid var(--win-line); padding: 0.8em 0.6em; font-size: 0.9em; display: flex; flex-direction: column; gap: 0.15em; }
+.sidebar .h { font-size: 0.8em; color: var(--win-muted); font-weight: 600; margin: 0 0 0.3em 0.4em; }
+.sidebar a { padding: 0.25em 0.5em; border-radius: 0.4em; cursor: pointer; color: inherit; text-decoration: none; }
+.sidebar a.on { background: var(--win-line); }
+.fmain { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }
+.flist { flex: 1; overflow: hidden; }
+.frow { display: grid; grid-template-columns: 1fr 9em 5em; gap: 1em; padding: 0.28em 1em; align-items: center; font-size: 0.92em; cursor: default; }
+.frow.head { color: var(--win-muted); font-size: 0.8em; border-bottom: 1px solid var(--win-line); }
+.frow:nth-child(odd):not(.head) { background: color-mix(in srgb, var(--win-bar) 50%, transparent); }
+.frow.sel, .ficon.sel .nm, .fcol .sel { background: var(--mac-sel) !important; color: var(--mac-sel-ink); }
+.frow .nm { display: flex; align-items: center; gap: 0.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ico { display: inline-block; width: 1.1em; height: 0.95em; border-radius: 0.15em; background: #4aa3f0; flex-shrink: 0; }
+.ico.file { width: 0.85em; height: 1.05em; background: var(--win); border: 1px solid var(--win-muted); border-radius: 0.1em; }
+.ico.hid { opacity: 0.45; }
+.ficons { display: flex; flex-wrap: wrap; gap: 1em; padding: 1em; align-content: flex-start; }
+.ficon { width: 7em; display: flex; flex-direction: column; align-items: center; gap: 0.3em; font-size: 0.9em; text-align: center; }
+.ficon .ico { width: 3.2em; height: 2.6em; border-radius: 0.3em; }
+.ficon .ico.file { width: 2.4em; height: 3em; }
+.ficon .nm { padding: 0 0.3em; border-radius: 0.3em; word-break: break-word; }
+.fcols { display: flex; height: 100%; }
+.fcol { flex: 1; border-right: 1px solid var(--win-line); padding: 0.4em 0; overflow: hidden; }
+.fcol div { padding: 0.2em 0.8em; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; gap: 0.4em; align-items: center; }
+.fcol .par { background: var(--win-line); }
+.gallery { display: flex; flex-direction: column; height: 100%; align-items: center; justify-content: center; gap: 1em; }
+.gallery .big { width: 40%; aspect-ratio: 4/3; border-radius: 0.5em; background: linear-gradient(160deg, #7fb8e8, #f2c48b); }
+.rename { background: var(--win) !important; color: var(--win-ink) !important; outline: 0.15em solid var(--mac-sel); border-radius: 0.2em; padding: 0 0.2em; }
+.pathbar, .statusbar { border-top: 1px solid var(--win-line); padding: 0.3em 1em; font-size: 0.85em; color: var(--win-muted); flex-shrink: 0; }
+.ftabs .tab { cursor: default; }
+
+/* Dock */
+.dock { position: absolute; left: 50%; bottom: 0.6em; transform: translateX(-50%); display: flex; gap: 0.6em; padding: 0.5em 0.7em 0.8em; border-radius: 1.2em; background: var(--dock); backdrop-filter: blur(16px); box-shadow: 0 0 0 1px rgba(255,255,255,0.25); z-index: 35; align-items: end; }
+.dock .app { width: 3.6em; height: 3.6em; border-radius: 0.9em; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.15em; position: relative; cursor: pointer; box-shadow: 0 0.2em 0.5em rgba(0,0,0,0.25); }
+.dock .app.run::after { content: ""; position: absolute; bottom: -0.55em; width: 0.35em; height: 0.35em; border-radius: 50%; background: var(--win-ink); }
+.dock .sep { width: 1px; align-self: stretch; background: rgba(255,255,255,0.4); margin: 0 0.2em; }
+.dock .mini { width: 4.5em; height: 3.2em; border-radius: 0.4em; background: var(--win); box-shadow: 0 0.2em 0.5em rgba(0,0,0,0.25); font-size: 0.6em; padding: 0.3em; overflow: hidden; color: var(--win-muted); cursor: pointer; }
+.ic-finder { background: linear-gradient(90deg, #5fb2ff 50%, #e6f0fb 50%); color: #134 !important; }
+.ic-safari { background: radial-gradient(circle at 50% 50%, #fff 0 18%, #3d9bff 19% 60%, #e8f2ff 61%); }
+.ic-textedit { background: linear-gradient(#fefefe, #e8e4da); color: #444 !important; }
+.ic-notes { background: linear-gradient(#ffd85c 0 28%, #fffdf3 28%); }
+.ic-trash { background: linear-gradient(#e4e6ea, #b9bdc4); color: #555 !important; }
+
+/* Overlays */
+.ov { position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; }
+.ov.scrim { background: var(--scrim); }
+.panel { background: var(--win); color: var(--win-ink); border-radius: 0.9em; box-shadow: 0 0 0 1px rgba(0,0,0,0.12), 0 1.4em 3.4em rgba(0,0,0,0.35); padding: 1.2em 1.4em; min-width: 24em; max-width: 70%; }
+.panel h4 { margin: 0 0 0.6em; font-size: 1.1em; }
+.panel .row { display: flex; gap: 0.6em; justify-content: flex-end; margin-top: 1em; }
+.panel .pb { padding: 0.3em 1em; border-radius: 0.45em; background: var(--win-bar); border: 1px solid var(--win-line); font-size: 0.92em; }
+.panel .pb.def { background: var(--mac-sel); color: var(--mac-sel-ink); border-color: var(--mac-sel); }
+.panel .field { border: 1px solid var(--mac-sel); border-radius: 0.4em; padding: 0.3em 0.6em; min-height: 1.9em; }
+.panel ul { margin: 0; padding: 0; list-style: none; }
+.panel li { padding: 0.3em 0.5em; border-radius: 0.3em; }
+.panel li.on { background: var(--mac-sel); color: var(--mac-sel-ink); }
+.spot { position: absolute; top: 22%; left: 50%; transform: translateX(-50%); width: 46%; background: var(--win); border-radius: 1em; box-shadow: 0 1.4em 3.4em rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.1); overflow: hidden; }
+.spot .q { font-size: 1.6em; padding: 0.5em 0.8em; display: flex; gap: 0.5em; align-items: center; }
+.spot .q .ph { color: var(--win-muted); }
+.spot ul { list-style: none; margin: 0; padding: 0.3em; border-top: 1px solid var(--win-line); }
+.spot li { padding: 0.4em 0.8em; border-radius: 0.5em; display: flex; justify-content: space-between; }
+.spot li.on { background: var(--mac-sel); color: var(--mac-sel-ink); }
+.switcher { display: flex; gap: 1em; padding: 1.2em; border-radius: 1.2em; background: rgba(40,40,46,0.7); backdrop-filter: blur(20px); }
+.switcher .app { width: 5em; height: 5em; border-radius: 1.1em; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.3em; }
+.switcher .app.on { outline: 0.25em solid rgba(255,255,255,0.7); outline-offset: 0.3em; }
+.mc { position: absolute; inset: 0; background: rgba(30,34,48,0.6); backdrop-filter: blur(6px); z-index: 60; display: flex; flex-direction: column; gap: 2em; padding: 1.2em 3em; }
+.mc .spaces { display: flex; gap: 1em; justify-content: center; }
+.mc .spaces div { width: 9em; aspect-ratio: 16/10; border-radius: 0.5em; background: linear-gradient(135deg, var(--wall-a), var(--wall-c)); color: #fff; font-size: 0.85em; display: flex; align-items: end; justify-content: center; padding: 0.3em; }
+.mc .spaces div.on { outline: 0.2em solid #fff; }
+.mc .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 2em; align-content: center; justify-content: center; }
+.mc .thumb { width: 26%; aspect-ratio: 16/11; background: var(--win); border-radius: 0.6em; box-shadow: 0 1em 2em rgba(0,0,0,0.35); display: flex; flex-direction: column; overflow: hidden; }
+.mc .thumb b { background: var(--win-bar); padding: 0.4em 0.7em; font-size: 0.9em; }
+.mc .cap { color: #fff; text-align: center; font-weight: 600; }
+.lock { position: absolute; inset: 0; z-index: 95; background: linear-gradient(160deg, var(--wall-a), var(--wall-b)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6em; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.35); }
+.lock .t { font-size: 6em; font-weight: 600; line-height: 1; }
+.lock .avatar { width: 4em; height: 4em; border-radius: 50%; background: rgba(255,255,255,0.35); margin-top: 3em; }
+.side-panel { position: absolute; top: 2.6em; right: 0.8em; width: 26%; display: flex; flex-direction: column; gap: 0.6em; z-index: 60; }
+.side-panel .card { background: var(--menubar); backdrop-filter: blur(20px); border-radius: 1em; padding: 0.8em 1em; box-shadow: 0 0.6em 1.6em rgba(0,0,0,0.2); font-size: 0.92em; }
+.side-panel .card small { color: var(--win-muted); display: block; }
+.cc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; }
+.cc-grid .card { padding: 0.7em; }
+.slider { height: 1.3em; border-radius: 1em; background: var(--win-line); position: relative; overflow: hidden; margin-top: 0.4em; }
+.slider i { position: absolute; inset: 0 40% 0 0; background: #fff; display: block; }
+.quicknote { position: absolute; right: 1em; bottom: 6em; width: 26%; height: 34%; background: #fff8d6; color: #333; border-radius: 0.7em; box-shadow: 0 1em 2.4em rgba(0,0,0,0.3); padding: 0.8em 1em; z-index: 60; }
+.emoji { position: absolute; left: 30%; top: 28%; background: var(--win); border-radius: 0.8em; box-shadow: 0 1em 2.4em rgba(0,0,0,0.3); padding: 0.8em; z-index: 60; display: grid; grid-template-columns: repeat(8, 2.2em); gap: 0.3em; font-size: 1.2em; }
+.emoji span { text-align: center; cursor: pointer; }
+.cross { position: absolute; inset: 0; z-index: 70; cursor: crosshair; }
+.cross::before, .cross::after { content: ""; position: absolute; background: #fff; mix-blend-mode: difference; }
+.cross::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+.cross::after { top: 50%; left: 0; right: 0; height: 1px; }
+.cross .tip { position: absolute; left: 51%; top: 51%; color: #fff; background: rgba(0,0,0,0.55); padding: 0.3em 0.6em; border-radius: 0.4em; font-size: 0.9em; }
+.cross.window { background: rgba(70,130,220,0.28); cursor: pointer; }
+.cross.window::before, .cross.window::after { display: none; }
+.cross.window .tip { left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.2em; }
+.shotbar { position: absolute; left: 50%; bottom: 7em; transform: translateX(-50%); background: rgba(40,40,46,0.85); color: #fff; border-radius: 0.8em; padding: 0.6em 1em; display: flex; gap: 1.2em; z-index: 70; font-size: 0.95em; }
+.toast { position: absolute; right: 1em; bottom: 6.5em; z-index: 80; background: var(--win); color: var(--win-ink); border-radius: 0.6em; box-shadow: 0 0.8em 2em rgba(0,0,0,0.3); padding: 0.6em 0.9em; display: flex; gap: 0.7em; align-items: center; max-width: 40%; }
+.toast .thumbimg { width: 3.4em; height: 2.2em; border-radius: 0.25em; background: linear-gradient(135deg, var(--wall-a), var(--wall-c)); flex-shrink: 0; }
+.dict { position: absolute; left: 22%; top: 34%; width: 36%; z-index: 60; }
+
+.pad { display: flex; flex-direction: column; gap: 8px; }
+.pad-label { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.pad-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .pad button { border: 0; padding: 0; background: none; cursor: pointer; border-radius: 7px; }
-.pad button .kc { transition: transform 80ms ease, background 120ms ease; }
 .pad button:active .kc { transform: translateY(2px); box-shadow: none; }
 .pad button[aria-pressed="true"] .kc { background: var(--accent); color: var(--accent-ink); }
 .pad button.held .kc { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pressed { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
 
-.howto { background: transparent; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; font-size: 14px; color: var(--muted); }
+.howto { border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; font-size: 14px; color: var(--muted); }
 .howto strong { color: var(--ink); }
-.howto ol { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
-.howto p { margin: 8px 0 0; }
-
+.howto p { margin: 6px 0 0; }
 details.sheet { border-top: 1px solid var(--line); padding-top: 14px; }
 details.sheet summary { cursor: pointer; font-family: var(--f-display); font-weight: 700; font-size: 20px; }
-.sheet h3 { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 22px 0 8px; }
-.sheet ul { list-style: none; margin: 0; padding: 0; }
-.sheet li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.sheet h3 { font: 600 11px/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 22px 0 6px; }
+.sheet ul { list-style: none; margin: 0; padding: 0; columns: 2 320px; column-gap: 32px; }
+.sheet li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); break-inside: avoid; font-size: 14px; }
 .sheet li > span:first-child { min-width: 0; }
-.sheet .combo { display: inline-flex; gap: 4px; flex-shrink: 0; }
-.sheet .box { font: 600 10px/1 var(--f-mono); color: var(--good); margin-left: 6px; }
-.reset { margin-top: 16px; }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 
 <div class="wrap">
   <header>
-    <h1><span class="glyph">⌘</span> Mac Shortcut Trainer</h1>
-    <div class="stats" aria-live="polite">
-      <div class="stat"><b id="sStreak">0</b><span>Streak</span></div>
-      <div class="stat"><b id="sScore">0/0</b><span>Session</span></div>
-      <div class="stat"><b id="sMastered">0</b><span>Mastered</span></div>
-    </div>
+    <h1><span class="glyph">⌘</span> Shortcut Parcours</h1>
+    <a href="flashcards.html">Prefer flashcards? Open the flashcard trainer</a>
   </header>
 
-  <div class="chips" id="chips" role="group" aria-label="Decks"></div>
+  <nav class="stages" id="stages" aria-label="Stages"></nav>
 
-  <section class="card" id="card">
-    <div class="eyebrow"><span id="cat">System</span><span id="level"></span></div>
-    <p class="action" id="action">Open Spotlight search</p>
-    <p class="note" id="note" hidden></p>
-    <div class="slot" id="slot" aria-live="polite"><span class="placeholder">Tap a modifier, let go, then press the key</span></div>
-    <div id="verdict" hidden></div>
-    <div class="actions">
-      <button class="btn primary" id="btnNext" hidden>Next card ↩</button>
-      <button class="btn" id="btnReveal">Show answer</button>
-      <button class="btn" id="btnClear">Clear</button>
-    </div>
-  </section>
+  <section class="brief" id="brief" aria-live="polite"></section>
+
+  <div class="screen-wrap"><div class="screen" id="screen"></div></div>
 
   <div class="pad">
-    <span class="pad-label">Modifiers — click or tap the real key</span>
-    <div class="pad-row" id="modRow"></div>
-    <span class="pad-label">Keys the browser might grab — click these instead</span>
-    <div class="pad-row" id="keyRow"></div>
+    <div class="pad-row">
+      <span class="pad-label">Modifiers</span>
+      <span id="modRow" class="pad-row"></span>
+      <span class="pressed" id="pressed"></span>
+    </div>
+    <div class="pad-row">
+      <span class="pad-label">Keys</span>
+      <span id="keyRow" class="pad-row"></span>
+    </div>
   </div>
 
   <div class="howto">
-    <strong>Why your screen won't jump around:</strong> never hold keys together.
-    <ol>
-      <li>Press and release <kbd class="small">⌘</kbd> (or <kbd class="small">⇧</kbd> <kbd class="small">⌥</kbd> <kbd class="small">⌃</kbd>). It lights up.</li>
-      <li>Then press the final key on its own, like <kbd class="small">W</kbd>.</li>
-    </ol>
-    <p>The trainer records <kbd class="small">⌘</kbd><kbd class="small">W</kbd>, but macOS never sees them pressed together, so nothing closes, quits or goes fullscreen. Tap a lit modifier again to turn it off. For <strong>fn / 🌐</strong>, use the on-screen key, since tapping the real one can open the emoji picker. Wrong answers come back sooner; a card counts as mastered after 3 correct in a row. Progress is saved in this browser.</p>
+    <strong>How to press shortcuts here without your real Mac reacting:</strong> tap the modifiers one at a time (press and let go), then press the last key. For <kbd class="s">⌘</kbd><kbd class="s">W</kbd>, tap <kbd class="s">⌘</kbd>, let go, press <kbd class="s">W</kbd>. The keys never go down together, so macOS doesn't close, hide or resize anything. Lit modifiers show which ones are armed; tap again to disarm.
+    <p>For <strong>fn / 🌐</strong>, click the on-screen fn key, since tapping the real one can open the emoji picker. Plain keys like <kbd class="s">space</kbd>, arrows and <kbd class="s">return</kbd> work as normal, and you can type text when a step asks for it. If the fake Mac gets into a mess, use <strong>Reset step</strong>.</p>
   </div>
 
   <details class="sheet" id="sheet">
-    <summary>Cheat sheet</summary>
+    <summary>Every shortcut in the parcours</summary>
     <div id="sheetBody"></div>
-    <button class="btn reset" id="btnReset">Reset all progress</button>
-    <span id="resetConfirm" hidden> <button class="btn" id="btnResetYes">Yes, reset</button></span>
   </details>
 </div>
 
 <script>
 (() => {
-// action, combo(s) separated by " | ", optional note. Combo = space-separated: modifiers then key.
-const DATA = {
-  "System": [
-    ["Open Spotlight search", "cmd Space"],
-    ["Switch to the next open app", "cmd Tab"],
-    ["Switch between windows of the same app", "cmd ` | cmd <", "On a German keyboard it's the key left of Y."],
-    ["Quit the current app", "cmd Q"],
-    ["Close the current window or tab", "cmd W"],
-    ["Close all windows of the app", "opt cmd W"],
-    ["Hide the current app", "cmd H"],
-    ["Hide all other apps", "opt cmd H"],
-    ["Minimize the window to the Dock", "cmd M"],
-    ["Open a new window", "cmd N"],
-    ["Open the app's Settings", "cmd ,"],
-    ["Toggle full screen", "ctrl cmd F | fn F"],
-    ["Open the Force Quit dialog", "opt cmd Esc"],
-    ["Lock the screen", "ctrl cmd Q"],
-    ["Log out", "shift cmd Q"],
-    ["Open Mission Control", "ctrl Up"],
-    ["Show all windows of the current app", "ctrl Down"],
-    ["Move one desktop (Space) to the left", "ctrl Left"],
-    ["Move one desktop (Space) to the right", "ctrl Right"],
-    ["Open the Emoji & Symbols picker", "ctrl cmd Space | fn E"],
-    ["Open Notification Center", "fn N"],
-    ["Open Control Center", "fn C"],
-    ["Start a Quick Note", "fn Q"],
-    ["Tile window to the left half", "ctrl fn Left", "macOS 15 Sequoia and later."],
-    ["Tile window to the right half", "ctrl fn Right", "macOS 15 Sequoia and later."],
-    ["Fill the screen with the window", "ctrl fn F", "macOS 15 Sequoia and later."],
-  ],
-  "Screenshots": [
-    ["Screenshot of the whole screen", "shift cmd 3"],
-    ["Screenshot of a selected area", "shift cmd 4"],
-    ["Open the screenshot & screen-recording toolbar", "shift cmd 5"],
-    ["Copy the whole screen to the clipboard", "ctrl shift cmd 3"],
-    ["Copy a selected area to the clipboard", "ctrl shift cmd 4"],
-  ],
-  "Text": [
-    ["Copy", "cmd C"],
-    ["Paste", "cmd V"],
-    ["Cut", "cmd X"],
-    ["Undo", "cmd Z"],
-    ["Redo", "shift cmd Z"],
-    ["Select all", "cmd A"],
-    ["Find", "cmd F"],
-    ["Find next match", "cmd G"],
-    ["Find previous match", "shift cmd G"],
-    ["Paste without formatting (match style)", "opt shift cmd V"],
-    ["Bold", "cmd B"],
-    ["Italic", "cmd I"],
-    ["Underline", "cmd U"],
-    ["Save", "cmd S"],
-    ["Save As / Duplicate", "shift cmd S"],
-    ["Print", "cmd P"],
-    ["Open a file", "cmd O"],
-    ["Jump to the start of the line", "cmd Left | ctrl A"],
-    ["Jump to the end of the line", "cmd Right | ctrl E"],
-    ["Jump to the start of the document", "cmd Up"],
-    ["Jump to the end of the document", "cmd Down"],
-    ["Move the cursor one word left", "opt Left"],
-    ["Move the cursor one word right", "opt Right"],
-    ["Select to the start of the line", "shift cmd Left"],
-    ["Select one word to the right", "opt shift Right"],
-    ["Delete the previous word", "opt Delete"],
-    ["Delete everything to the start of the line", "cmd Delete"],
-    ["Delete the character to the right (forward delete)", "fn Delete"],
-    ["Delete to the end of the line", "ctrl K"],
-    ["Look up the selected word in the dictionary", "ctrl cmd D"],
-  ],
-  "Finder": [
-    ["Create a new folder", "shift cmd N"],
-    ["Move the selected file to the Trash", "cmd Delete"],
-    ["Empty the Trash", "shift cmd Delete"],
-    ["Duplicate the selected file", "cmd D"],
-    ["Get Info on the selected file", "cmd I"],
-    ["Quick Look (preview) the selected file", "Space"],
-    ["Rename the selected file", "Return"],
-    ["Open the selected item", "cmd Down | cmd O"],
-    ["Go to the enclosing (parent) folder", "cmd Up"],
-    ["Go to a folder by typing its path", "shift cmd G"],
-    ["Show or hide hidden files", "shift cmd ."],
-    ["Open the Applications folder", "shift cmd A"],
-    ["Open the Desktop folder", "shift cmd D"],
-    ["Open the Downloads folder", "opt cmd L"],
-    ["Open your Home folder", "shift cmd H"],
-    ["View as icons", "cmd 1"],
-    ["View as list", "cmd 2"],
-    ["View as columns", "cmd 3"],
-    ["Show or hide the path bar", "opt cmd P"],
-    ["Open a new Finder tab", "cmd T"],
-    ["Connect to a server", "cmd K"],
-  ],
-  "Browser": [
-    ["Open a new tab", "cmd T"],
-    ["Reopen the last closed tab", "shift cmd T | cmd Z"],
-    ["Jump to the address bar", "cmd L"],
-    ["Reload the page", "cmd R"],
-    ["Go to the next tab", "ctrl Tab | shift cmd ]"],
-    ["Go to the previous tab", "ctrl shift Tab | shift cmd ["],
-    ["Jump to the first tab", "cmd 1"],
-    ["Jump to the last tab", "cmd 9"],
-    ["Go back a page", "cmd [ | cmd Left"],
-    ["Go forward a page", "cmd ] | cmd Right"],
-    ["Bookmark the page", "cmd D"],
-    ["Zoom in", "cmd = | cmd + | shift cmd ="],
-    ["Zoom out", "cmd -"],
-    ["Reset zoom to 100%", "cmd 0"],
-    ["Open a private / incognito window", "shift cmd N"],
-    ["Show browsing history", "cmd Y"],
-    ["Open developer tools", "opt cmd I"],
-  ],
-};
-
-const MOD_ORDER = ["fn", "ctrl", "opt", "shift", "cmd"];
-const MOD_GLYPH = { fn: "fn", ctrl: "⌃", opt: "⌥", shift: "⇧", cmd: "⌘" };
-const MOD_NAME = { fn: "fn / Globe", ctrl: "Control", opt: "Option", shift: "Shift", cmd: "Command" };
-const KEY_GLYPH = { Left: "←", Right: "→", Up: "↑", Down: "↓", Return: "return ↩", Delete: "delete ⌫", Esc: "esc", Tab: "tab ⇥", Space: "space" };
-const WORD_KEYS = new Set(["Return", "Delete", "Esc", "Tab", "Space"]);
-
-const parseCombo = s => {
-  const parts = s.trim().split(/\s+/);
-  const key = parts.pop();
-  return { mods: new Set(parts), key };
-};
-const comboId = c => MOD_ORDER.filter(m => c.mods.has(m)).join("+") + "|" + c.key;
-
-const cards = [];
-for (const [cat, rows] of Object.entries(DATA)) {
-  rows.forEach(([action, combos, note]) => {
-    const answers = combos.split("|").map(parseCombo);
-    cards.push({ id: cat + ":" + action, cat, action, note, answers, ids: new Set(answers.map(comboId)) });
-  });
-}
-const CATS = Object.keys(DATA);
-
-// ---- storage (per-browser convenience; safe if blocked) ----
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
 };
-let boxes = store.get("mst.boxes", {});           // card id -> correct-in-a-row count
-let active = new Set(store.get("mst.cats", CATS).filter(c => CATS.includes(c)));
-if (!active.size) CATS.forEach(c => active.add(c));
 
-// ---- state ----
-let current = null, lastId = null;
-let phase = "ask";            // ask | result
-let firstTryCorrect = false;
-let sticky = new Set();       // modifiers toggled on by tapping
-let held = new Set();         // modifiers physically down right now
-let tapCandidate = null;      // modifier pressed with no other key yet
-let session = { right: 0, total: 0, streak: 0 };
+/* ================= keys & combos ================= */
+const MOD_ORDER = ["fn", "ctrl", "opt", "shift", "cmd"];
+const MOD_GLYPH = { fn: "fn", ctrl: "⌃", opt: "⌥", shift: "⇧", cmd: "⌘" };
+const MOD_NAME = { fn: "fn / Globe", ctrl: "Control", opt: "Option", shift: "Shift", cmd: "Command" };
+const KEY_GLYPH = { Left: "←", Right: "→", Up: "↑", Down: "↓", Return: "return", Delete: "delete", Esc: "esc", Tab: "tab", Space: "space" };
+const WORD_KEYS = new Set(["Return", "Delete", "Esc", "Tab", "Space", "fn"]);
+const cid = (mods, key) => [...MOD_ORDER.filter(m => mods.has(m)), key].join(" ");
+const parse = s => { const p = s.trim().split(/\s+/); const key = p.pop(); return { mods: new Set(p), key }; };
+const norm = s => { const c = parse(s); return cid(c.mods, c.key); };
+const kc = (label, word, small) => `<span class="kc${word ? " word" : ""}${small ? " s" : ""}">${esc(label)}</span>`;
+function comboHTML(s, small) {
+  const c = parse(s);
+  return `<span class="combo">${MOD_ORDER.filter(m => c.mods.has(m)).map(m => kc(MOD_GLYPH[m], m === "fn", small)).join("")}${kc(KEY_GLYPH[c.key] || c.key, WORD_KEYS.has(c.key), small)}</span>`;
+}
+const combosHTML = (list, small) => list.map(s => comboHTML(s, small)).join('<span class="or">or</span>');
+const isTyping = c => c.key.length === 1 && [...c.mods].every(m => m === "shift");
+const charOf = c => (/^[A-Z]$/.test(c.key) ? (c.mods.has("shift") ? c.key : c.key.toLowerCase()) : c.key);
 
-const $ = id => document.getElementById(id);
+/* ================= the simulated Mac ================= */
+const HOME = "/Users/alex";
+const Fd = name => ({ name, dir: true });
+const Fl = name => ({ name, dir: false });
+function makeFS() {
+  return {
+    "/": [Fd("Applications"), Fd("Library"), Fd("System"), Fd("Users")],
+    "/Applications": ["App Store.app", "Calculator.app", "Calendar.app", "Finder.app", "Notes.app", "Safari.app", "TextEdit.app"].map(Fl).concat([Fd("Utilities")]),
+    "/Applications/Utilities": ["Activity Monitor.app", "Disk Utility.app", "Terminal.app"].map(Fl),
+    "/Library": [], "/System": [],
+    "/Users": [Fd("alex"), Fd("Shared")], "/Users/Shared": [],
+    "/Users/alex": [Fd("Desktop"), Fd("Documents"), Fd("Downloads"), Fd("Music"), Fd("Pictures"), Fl(".zshrc")],
+    "/Users/alex/Desktop": [Fl("Resume.pdf"), Fl("Budget 2026.numbers")],
+    "/Users/alex/Documents": [Fd("Taxes 2025"), Fl("Lease agreement.pdf"), Fl("Ideas.txt")],
+    "/Users/alex/Documents/Taxes 2025": [],
+    "/Users/alex/Downloads": [Fl("Invoice-0423.pdf"), Fl("beach.jpg"), Fl("Setup.dmg"), Fl("notes.txt"), Fd("Old Projects"), Fl(".partial-download")],
+    "/Users/alex/Downloads/Old Projects": [Fl("draft-v1.key"), Fl("mockup.png")],
+    "/Users/alex/Music": [], "/Users/alex/Pictures": [Fl("Vacation.jpg"), Fl("Family.jpg")],
+  };
+}
+const join = (p, n) => (p === "/" ? "/" + n : p + "/" + n);
+const parentOf = p => (p === "/" ? "/" : p.slice(0, p.lastIndexOf("/")) || "/");
+const baseOf = p => (p === "/" ? "Macintosh HD" : p === HOME ? "alex" : p.split("/").pop());
 
-// ---- rendering helpers ----
-const keyCap = (label, word) => `<span class="kc${word ? " word" : ""}">${label}</span>`;
-const comboHTML = c => {
-  const mods = MOD_ORDER.filter(m => c.mods.has(m)).map(m => keyCap(MOD_GLYPH[m], m === "fn"));
-  const k = KEY_GLYPH[c.key] || c.key;
-  return `<span class="combo">${mods.join("")}${keyCap(escapeHTML(k), WORD_KEYS.has(c.key))}</span>`;
+const mkTab = (title, url, back = []) => ({ title, url, back: back.slice(), fwd: [] });
+const mkSafari = (tabs, priv) => ({ kind: "safari", tabs: tabs.map(t => (Array.isArray(t) ? mkTab(t[0], t[1]) : t)), active: 0, zoom: 100, priv: !!priv, find: null, dev: false, view: "page", layout: null, reload: 0 });
+const mkDoc = (name, text, saved = true) => ({ kind: "textedit", name, text, marks: Array(text.length).fill(""), caret: text.length, anchor: text.length, undo: [], redo: [], edited: false, saved, find: null, layout: null });
+const mkFinder = path => ({ kind: "finder", path, back: [], fwd: [], selName: null, view: "list", tabs: 1, pathbar: false, sidebar: true, status: false, layout: null });
+const START = ["Start Page", ""];
+
+function baseWorld() {
+  const app = () => ({ running: true, hidden: false, wins: [], front: 0, min: [], closed: [] });
+  return {
+    front: "finder", mru: ["finder", "safari", "textedit"],
+    apps: { finder: app(), safari: app(), textedit: app() },
+    overlay: null, ov: {}, input: null, inputText: "",
+    clip: null, space: 1, showDesktop: false, fs: makeFS(), trash: ["old-draft.docx", "IMG_2041.HEIC"],
+    hiddenShown: false, bookmarks: [], screenshots: 0, history: [],
+  };
+}
+const A = (S, a) => S.apps[a];
+function W(S) { const a = S.apps[S.front]; if (!a || !a.running || a.hidden || !a.wins.length) return null; a.front = Math.min(a.front, a.wins.length - 1); return a.wins[a.front]; }
+const D = S => { const w = W(S); return w && w.kind === "textedit" ? w : null; };
+const SW = S => { const w = W(S); return w && w.kind === "safari" ? w : null; };
+const FW = S => { const w = W(S); return w && w.kind === "finder" ? w : null; };
+const TAB = S => { const w = SW(S); return w ? w.tabs[w.active] : null; };
+const APP_NAME = { finder: "Finder", safari: "Safari", textedit: "TextEdit" };
+function defaultWin(app) { return app === "safari" ? mkSafari([START]) : app === "textedit" ? mkDoc("Untitled", "", false) : mkFinder(HOME); }
+function activate(S, app, create) {
+  const a = A(S, app);
+  if (!a.running) { a.running = true; a.wins = []; }
+  a.hidden = false;
+  if (!a.wins.length && a.min.length) { a.wins.push(a.min.pop()); a.front = a.wins.length - 1; }
+  if (!a.wins.length && create) { a.wins.push(defaultWin(app)); a.front = 0; }
+  S.front = app; S.mru = [app, ...S.mru.filter(x => x !== app)]; S.showDesktop = false;
+}
+function frontAfter(S) {
+  const cur = S.front;
+  const next = S.mru.find(x => x !== cur && A(S, x).running && !A(S, x).hidden) || "finder";
+  S.front = next; S.mru = [next, ...S.mru.filter(x => x !== next)];
+}
+function ensure(S, app, mk) { activate(S, app); const a = A(S, app); if (!a.wins.length) { a.wins.push(mk()); a.front = 0; } return W(S); }
+
+/* ---- what each action is called (feedback + event names) ---- */
+const EV = {
+  type: "Typed", move: "Moved the cursor", select: "Changed the selection", nothing: "Nothing to do there",
+  spotlight: "Opened Spotlight", launch: "Opened the app", appSwitch: "Switched to the previous app", winCycle: "Switched to the app's next window", oneWin: "Only one window, nothing to switch to",
+  quit: "Quit the app", noQuit: "Finder can't be quit", hide: "Hid the app", hideOthers: "Hid all other apps", minimize: "Minimized the window", closeAll: "Closed all the app's windows",
+  fullscreen: "Toggled full screen", forceQuit: "Opened Force Quit", forced: "Force quit the app", lock: "Locked the screen", unlock: "Unlocked", logout: "Opened the Log Out dialog", loggedOut: "Logged out",
+  mission: "Opened Mission Control", expose: "Showed all windows of this app", spaceL: "Moved one desktop left", spaceR: "Moved one desktop right", spaceEdge: "No more desktops that way",
+  emoji: "Opened Emoji & Symbols", notif: "Toggled Notification Center", control: "Toggled Control Center", quickNote: "Started a Quick Note", showDesktop: "Toggled Show Desktop",
+  tileL: "Tiled the window left", tileR: "Tiled the window right", tileF: "Window fills the screen",
+  shotFull: "Saved a screenshot to the Desktop", shotSel: "Started a selection screenshot", shotWin: "Switched to window capture", shotTool: "Opened the screenshot toolbar", clipFull: "Copied the screen to the clipboard", shotTaken: "Captured the screenshot",
+  settings: "Opened Settings", close: "Closed it", cancel: "Cancelled",
+  // TextEdit
+  docNew: "New document", docClose: "Closed the document", saveSheet: "Opened the Save sheet", saved: "Saved", saveAs: "Opened Duplicate / Save As", print: "Opened Print", open: "Opened the Open dialog",
+  selAll: "Selected all", copy: "Copied", copyNone: "Nothing selected to copy", cut: "Cut", paste: "Pasted", pastePlain: "Pasted without formatting", pasteNone: "The clipboard is empty",
+  undo: "Undid the last change", redo: "Redid the change", noUndo: "Nothing to undo", bold: "Toggled bold", italic: "Toggled italic", underline: "Toggled underline", noSel: "Select some text first",
+  find: "Opened Find", findNext: "Jumped to the next match", findPrev: "Jumped to the previous match", findNone: "Nothing to search for yet", useSel: "Searching for the selection", dict: "Looked up the word", del: "Deleted",
+  // Safari
+  tabNew: "Opened a new tab", tabClose: "Closed the tab", winClose: "Closed the window", tabReopen: "Reopened the closed tab", noReopen: "No closed tabs to reopen", addr: "Selected the address bar", go: "Loaded the page",
+  tabNext: "Next tab", tabPrev: "Previous tab", tabN: "Jumped to a tab", tabLast: "Jumped to the last tab", back: "Went back", fwd: "Went forward", noBack: "No page to go back to", noFwd: "No page to go forward to",
+  reload: "Reloaded the page", bookmark: "Bookmarked the page", zoomIn: "Zoomed in", zoomOut: "Zoomed out", zoomReset: "Reset zoom to 100%", winNew: "Opened a new window", privNew: "Opened a private window",
+  history: "Toggled History", dev: "Toggled developer tools",
+  // Finder
+  selMove: "Changed the selected file", look: "Quick Look preview", rename: "Started renaming", renamed: "Renamed", openItem: "Opened it", up: "Went to the enclosing folder", top: "Already at the top",
+  trash: "Moved it to the Trash", emptyAsk: "Asked to empty the Trash", emptied: "Emptied the Trash", dup: "Duplicated it", info: "Opened Get Info", newFolder: "Created a new folder", goto: "Opened Go to Folder", went: "Went to the folder", notFound: "Folder not found",
+  hidden: "Toggled hidden files", goHome: "Went to Home", goApps: "Went to Applications", goDesk: "Went to Desktop", goDocs: "Went to Documents", goDl: "Went to Downloads", goUtil: "Went to Utilities", goComp: "Went to the computer",
+  view: "Changed the view", pathbar: "Toggled the path bar", sidebar: "Toggled the sidebar", statusbar: "Toggled the status bar", ftab: "Opened a new Finder tab", fwin: "Opened a new Finder window", connect: "Opened Connect to Server", selAllFiles: "Selected all files",
 };
-const escapeHTML = s => s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
 
-function renderChips() {
-  $("chips").innerHTML = CATS.map(c => {
-    const list = cards.filter(x => x.cat === c);
-    const m = list.filter(x => (boxes[x.id] || 0) >= 3).length;
-    return `<button class="chip" data-cat="${c}" aria-pressed="${active.has(c)}">${c}<span class="n">${m}/${list.length}</span></button>`;
+/* ---------- TextEdit helpers ---------- */
+const rng = d => [Math.min(d.anchor, d.caret), Math.max(d.anchor, d.caret)];
+const isW = ch => /[\p{L}\p{N}'’]/u.test(ch || "");
+const lineStart = (t, i) => t.lastIndexOf("\n", i - 1) + 1;
+const lineEnd = (t, i) => { const j = t.indexOf("\n", i); return j < 0 ? t.length : j; };
+const wordLeft = (t, i) => { while (i > 0 && !isW(t[i - 1])) i--; while (i > 0 && isW(t[i - 1])) i--; return i; };
+const wordRight = (t, i) => { while (i < t.length && !isW(t[i])) i++; while (i < t.length && isW(t[i])) i++; return i; };
+function lineUp(t, i) { const ls = lineStart(t, i); if (ls === 0) return 0; const col = i - ls; const pls = lineStart(t, ls - 1); return Math.min(pls + col, ls - 1); }
+function lineDown(t, i) { const le = lineEnd(t, i); if (le === t.length) return t.length; const col = i - lineStart(t, i); const nls = le + 1; return Math.min(nls + col, lineEnd(t, nls)); }
+function snapDoc(d) { d.undo.push({ text: d.text, marks: d.marks.slice(), caret: d.caret, anchor: d.anchor }); if (d.undo.length > 60) d.undo.shift(); d.redo = []; d.edited = true; }
+function ins(d, str, mk) { const [a, b] = rng(d); snapDoc(d); d.text = d.text.slice(0, a) + str + d.text.slice(b); d.marks = [...d.marks.slice(0, a), ...(mk || Array(str.length).fill("")), ...d.marks.slice(b)]; d.caret = d.anchor = a + str.length; }
+function del(d, a, b) { a = Math.max(0, a); b = Math.min(d.text.length, b); if (a >= b) return EV.nothing; snapDoc(d); d.text = d.text.slice(0, a) + d.text.slice(b); d.marks.splice(a, b - a); d.caret = d.anchor = a; return EV.del; }
+function toggleMark(d, f, ev) {
+  const [a, b] = rng(d); if (a === b) return EV.noSel;
+  const all = d.marks.slice(a, b).every(m => m.includes(f)); snapDoc(d);
+  for (let i = a; i < b; i++) d.marks[i] = all ? d.marks[i].replace(f, "") : (d.marks[i].includes(f) ? d.marks[i] : d.marks[i] + f);
+  return ev;
+}
+function findMatches(text, q) { const out = []; if (!q) return out; const T = text.toLowerCase(), Q = q.toLowerCase(); let i = T.indexOf(Q); while (i >= 0) { out.push(i); i = T.indexOf(Q, i + 1); } return out; }
+function findStep(d, dir) {
+  const q = d.find && d.find.q; if (!q) return EV.findNone;
+  const m = findMatches(d.text, q); if (!m.length) return EV.findNone;
+  const [s, e] = rng(d);
+  const pos = dir > 0 ? (m.find(x => x >= (s !== e ? s + 1 : d.caret)) ?? m[0]) : (m.filter(x => x < s).pop() ?? m[m.length - 1]);
+  d.anchor = pos; d.caret = pos + q.length;
+  return dir > 0 ? EV.findNext : EV.findPrev;
+}
+
+function editKeys(S, id, c) {
+  const a = A(S, "textedit");
+  if (id === "cmd N") {
+    const n = a.wins.length + a.min.length;
+    a.wins.push(mkDoc(n ? `Untitled ${n + 1}` : "Untitled", "", false)); a.front = a.wins.length - 1; return EV.docNew;
+  }
+  if (id === "cmd O") { S.overlay = "open"; return EV.open; }
+  const d = D(S); if (!d) return null;
+  const t = d.text, L = t.length, [s, e] = rng(d), has = s !== e;
+  const mv = (p, ext) => { d.caret = Math.max(0, Math.min(L, p)); if (!ext) d.anchor = d.caret; return ext ? EV.select : EV.move; };
+  switch (id) {
+    case "cmd W": a.wins.splice(a.front, 1); a.front = Math.max(0, a.wins.length - 1); return EV.docClose;
+    case "cmd S": if (d.saved) { d.edited = false; return EV.saved; } S.overlay = "save"; S.ov = { name: "Packing list 2" }; return EV.saveSheet;
+    case "shift cmd S": S.overlay = "saveas"; return EV.saveAs;
+    case "cmd P": S.overlay = "print"; return EV.print;
+    case "cmd A": d.anchor = 0; d.caret = L; return EV.selAll;
+    case "cmd C": if (!has) return EV.copyNone; S.clip = { text: t.slice(s, e), marks: d.marks.slice(s, e) }; return EV.copy;
+    case "cmd X": if (!has) return EV.copyNone; S.clip = { text: t.slice(s, e), marks: d.marks.slice(s, e) }; del(d, s, e); return EV.cut;
+    case "cmd V": if (!S.clip || !S.clip.text) return EV.pasteNone; ins(d, S.clip.text, S.clip.marks.slice()); return EV.paste;
+    case "opt shift cmd V": if (!S.clip || !S.clip.text) return EV.pasteNone; ins(d, S.clip.text); return EV.pastePlain;
+    case "cmd Z": { if (!d.undo.length) return EV.noUndo; const st = d.undo.pop(); d.redo.push({ text: d.text, marks: d.marks.slice(), caret: d.caret, anchor: d.anchor }); Object.assign(d, st); d.edited = true; return EV.undo; }
+    case "shift cmd Z": { if (!d.redo.length) return EV.noUndo; const st = d.redo.pop(); d.undo.push({ text: d.text, marks: d.marks.slice(), caret: d.caret, anchor: d.anchor }); Object.assign(d, st); d.edited = true; return EV.redo; }
+    case "cmd B": return toggleMark(d, "b", EV.bold);
+    case "cmd I": return toggleMark(d, "i", EV.italic);
+    case "cmd U": return toggleMark(d, "u", EV.underline);
+    case "cmd F": d.find = d.find || { q: "" }; S.input = "find"; return EV.find;
+    case "cmd G": return findStep(d, 1);
+    case "shift cmd G": return findStep(d, -1);
+    case "cmd E": if (!has) return EV.noSel; d.find = { q: t.slice(s, e) }; return EV.useSel;
+    case "ctrl cmd D": { const w = has ? t.slice(s, e) : t.slice(wordLeft(t, s + (isW(t[s]) ? 1 : 0)), wordRight(t, s)); S.overlay = "dict"; S.ov = { word: w.trim() || "keyboard" }; return EV.dict; }
+    case "Left": return has ? mv(s) : mv(d.caret - 1);
+    case "Right": return has ? mv(e) : mv(d.caret + 1);
+    case "Up": return mv(lineUp(t, d.caret));
+    case "Down": return mv(lineDown(t, d.caret));
+    case "shift Left": return mv(d.caret - 1, 1);
+    case "shift Right": return mv(d.caret + 1, 1);
+    case "shift Up": return mv(lineUp(t, d.caret), 1);
+    case "shift Down": return mv(lineDown(t, d.caret), 1);
+    case "cmd Left": case "ctrl A": return mv(lineStart(t, d.caret));
+    case "cmd Right": case "ctrl E": return mv(lineEnd(t, d.caret));
+    case "cmd Up": return mv(0);
+    case "cmd Down": return mv(L);
+    case "shift cmd Left": return mv(lineStart(t, d.caret), 1);
+    case "shift cmd Right": return mv(lineEnd(t, d.caret), 1);
+    case "shift cmd Up": return mv(0, 1);
+    case "shift cmd Down": return mv(L, 1);
+    case "opt Left": return mv(wordLeft(t, d.caret));
+    case "opt Right": return mv(wordRight(t, d.caret));
+    case "opt shift Left": return mv(wordLeft(t, d.caret), 1);
+    case "opt shift Right": return mv(wordRight(t, d.caret), 1);
+    case "Delete": case "ctrl H": return has ? del(d, s, e) : del(d, s - 1, s);
+    case "opt Delete": return has ? del(d, s, e) : del(d, wordLeft(t, s), s);
+    case "cmd Delete": return has ? del(d, s, e) : del(d, lineStart(t, s), s);
+    case "fn Delete": case "ctrl D": return has ? del(d, s, e) : del(d, s, s + 1);
+    case "ctrl K": { const le = lineEnd(t, s); return del(d, s, le === s ? s + 1 : le); }
+    case "Return": ins(d, "\n"); return EV.type;
+    case "Space": case "shift Space": ins(d, " "); return EV.type;
+  }
+  if (isTyping(c)) { ins(d, charOf(c)); return EV.type; }
+  return null;
+}
+
+/* ---------- Safari ---------- */
+const ZOOMS = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300];
+const titleFor = url => { const host = url.replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, ""); const n = host.split(".")[0] || "Page"; return n.charAt(0).toUpperCase() + n.slice(1); };
+function safariKeys(S, id) {
+  const a = A(S, "safari"); let w = SW(S);
+  const newWin = priv => { a.wins.push(mkSafari([START], priv)); a.front = a.wins.length - 1; S.input = "address"; S.inputText = ""; };
+  if (id === "cmd N") { newWin(false); return EV.winNew; }
+  if (id === "shift cmd N") { newWin(true); return EV.privNew; }
+  if (id === "cmd T" && !w) { newWin(false); return EV.winNew; }
+  if ((id === "shift cmd T" || id === "cmd Z") && !w && a.closed.length) { a.wins.push(mkSafari([])); a.front = a.wins.length - 1; w = SW(S); }
+  if (!w) return null;
+  const tab = w.tabs[w.active];
+  switch (id) {
+    case "cmd T": w.tabs.push(mkTab(...START)); w.active = w.tabs.length - 1; S.input = "address"; S.inputText = ""; return EV.tabNew;
+    case "cmd W":
+      a.closed.push({ tab: w.tabs[w.active], index: w.active });
+      w.tabs.splice(w.active, 1);
+      if (!w.tabs.length) { a.wins.splice(a.front, 1); a.front = Math.max(0, a.wins.length - 1); return EV.winClose; }
+      w.active = Math.min(w.active, w.tabs.length - 1); return EV.tabClose;
+    case "shift cmd T": case "cmd Z": {
+      if (!a.closed.length) return EV.noReopen;
+      const c = a.closed.pop(); const i = Math.min(c.index, w.tabs.length); w.tabs.splice(i, 0, c.tab); w.active = i; return EV.tabReopen;
+    }
+    case "cmd L": S.input = "address"; S.inputText = ""; return EV.addr;
+    case "ctrl Tab": case "shift cmd ]": w.active = (w.active + 1) % w.tabs.length; return EV.tabNext;
+    case "ctrl shift Tab": case "shift cmd [": w.active = (w.active - 1 + w.tabs.length) % w.tabs.length; return EV.tabPrev;
+    case "cmd 9": w.active = w.tabs.length - 1; return EV.tabLast;
+    case "cmd [": case "cmd Left":
+      if (!tab.back.length) return EV.noBack;
+      tab.fwd.push({ title: tab.title, url: tab.url }); Object.assign(tab, tab.back.pop()); w.reload++; return EV.back;
+    case "cmd ]": case "cmd Right":
+      if (!tab.fwd.length) return EV.noFwd;
+      tab.back.push({ title: tab.title, url: tab.url }); Object.assign(tab, tab.fwd.pop()); w.reload++; return EV.fwd;
+    case "cmd R": w.reload++; return EV.reload;
+    case "cmd D": if (tab.url && !S.bookmarks.includes(tab.title)) S.bookmarks.push(tab.title); return EV.bookmark;
+    case "cmd =": case "cmd +": case "shift cmd =": { const i = ZOOMS.indexOf(w.zoom); w.zoom = ZOOMS[Math.min(ZOOMS.length - 1, i + 1)]; return EV.zoomIn; }
+    case "cmd -": { const i = ZOOMS.indexOf(w.zoom); w.zoom = ZOOMS[Math.max(0, i - 1)]; return EV.zoomOut; }
+    case "cmd 0": w.zoom = 100; return EV.zoomReset;
+    case "cmd Y": w.view = w.view === "history" ? "page" : "history"; return EV.history;
+    case "cmd F": w.find = w.find || { q: "" }; S.input = "find"; return EV.find;
+    case "opt cmd I": w.dev = !w.dev; return EV.dev;
+  }
+  const m = /^cmd ([1-8])$/.exec(id);
+  if (m) { const n = +m[1]; if (n <= w.tabs.length) w.active = n - 1; return EV.tabN; }
+  return null;
+}
+
+/* ---------- Finder ---------- */
+function items(S, path) {
+  return (S.fs[path] || []).filter(i => S.hiddenShown || !i.name.startsWith(".")).slice().sort((x, y) => x.name.localeCompare(y.name, undefined, { sensitivity: "base" }));
+}
+function goPath(S, w, path) {
+  if (!S.fs[path]) return false;
+  if (path !== w.path) { w.back.push(w.path); w.fwd = []; w.path = path; }
+  const list = items(S, path); w.selName = list.length ? list[0].name : null; w.selAll = false;
+  return true;
+}
+function uniqueName(S, path, name) {
+  const names = new Set((S.fs[path] || []).map(i => i.name)); if (!names.has(name)) return name;
+  const dot = name.lastIndexOf("."); const b = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : "";
+  for (let n = 2; ; n++) { const c = `${b} ${n}${ext}`; if (!names.has(c)) return c; }
+}
+function renameFS(S, path, from, to) {
+  const it = S.fs[path].find(i => i.name === from); if (!it) return;
+  it.name = to;
+  if (it.dir) {
+    const oldP = join(path, from), newP = join(path, to);
+    for (const k of Object.keys(S.fs)) if (k === oldP || k.startsWith(oldP + "/")) { S.fs[newP + k.slice(oldP.length)] = S.fs[k]; delete S.fs[k]; }
+  }
+}
+function finderKeys(S, id) {
+  const a = A(S, "finder");
+  let w = FW(S);
+  const need = () => { if (!w) { a.hidden = false; a.wins.push(mkFinder(HOME)); a.front = a.wins.length - 1; w = FW(S); goPath(S, w, HOME); } return w; };
+  const GO = { "shift cmd H": [HOME, EV.goHome], "shift cmd A": ["/Applications", EV.goApps], "shift cmd D": [HOME + "/Desktop", EV.goDesk], "shift cmd O": [HOME + "/Documents", EV.goDocs], "opt cmd L": [HOME + "/Downloads", EV.goDl], "shift cmd U": ["/Applications/Utilities", EV.goUtil], "shift cmd C": ["/", EV.goComp] };
+  if (GO[id]) { need(); goPath(S, w, GO[id][0]); return GO[id][1]; }
+  if (id === "cmd N") { a.wins.push(mkFinder(HOME)); a.front = a.wins.length - 1; goPath(S, W(S), HOME); return EV.fwin; }
+  if (id === "shift cmd G") { need(); S.overlay = "goto"; S.input = "goto"; S.inputText = ""; return EV.goto; }
+  if (id === "opt shift cmd Delete") { S.trash = []; return EV.emptied; }
+  if (id === "shift cmd Delete") { S.overlay = "emptytrash"; return EV.emptyAsk; }
+  if (id === "cmd K") { S.overlay = "connect"; return EV.connect; }
+  if (!w) return null;
+  const list = items(S, w.path); const idx = list.findIndex(i => i.name === w.selName); const sel = list[idx];
+  switch (id) {
+    case "Up": case "Left": if (list.length) { w.selName = list[Math.max(0, idx - 1)].name; w.selAll = false; } return EV.selMove;
+    case "Down": case "Right": if (list.length) { w.selName = list[Math.min(list.length - 1, idx + 1)].name; w.selAll = false; } return EV.selMove;
+    case "Space": if (!sel) return EV.nothing; S.overlay = "quicklook"; S.ov = { name: sel.name, dir: sel.dir }; return EV.look;
+    case "Return": if (!sel) return EV.nothing; S.input = "rename"; S.inputText = ""; S.ov = { renaming: sel.name }; return EV.rename;
+    case "cmd Down": case "cmd O":
+      if (!sel) return EV.nothing;
+      if (sel.dir) { goPath(S, w, join(w.path, sel.name)); return EV.openItem; }
+      toast(`Opened “${sel.name}”`); return EV.openItem;
+    case "cmd Up": { if (w.path === "/") return EV.top; const from = baseOf(w.path); goPath(S, w, parentOf(w.path)); w.selName = from === "alex" ? "alex" : from; return EV.up; }
+    case "cmd [": if (!w.back.length) return EV.noBack; w.fwd.push(w.path); w.path = w.back.pop(); w.selName = (items(S, w.path)[0] || {}).name || null; return EV.back;
+    case "cmd ]": if (!w.fwd.length) return EV.noFwd; w.back.push(w.path); w.path = w.fwd.pop(); w.selName = (items(S, w.path)[0] || {}).name || null; return EV.fwd;
+    case "cmd Delete": {
+      if (!sel) return EV.nothing;
+      S.fs[w.path] = S.fs[w.path].filter(i => i !== sel); S.trash.push(sel.name);
+      const nl = items(S, w.path); w.selName = nl.length ? nl[Math.min(idx, nl.length - 1)].name : null; return EV.trash;
+    }
+    case "cmd D": {
+      if (!sel || sel.dir) return sel ? EV.nothing : EV.nothing;
+      const dot = sel.name.lastIndexOf("."); const nm = uniqueName(S, w.path, dot > 0 ? sel.name.slice(0, dot) + " copy" + sel.name.slice(dot) : sel.name + " copy");
+      S.fs[w.path].push(Fl(nm)); w.selName = nm; return EV.dup;
+    }
+    case "cmd I": if (!sel) return EV.nothing; S.overlay = "info"; S.ov = { name: sel.name, dir: sel.dir, where: w.path }; return EV.info;
+    case "shift cmd N": { const nm = uniqueName(S, w.path, "untitled folder"); S.fs[w.path].push(Fd(nm)); S.fs[join(w.path, nm)] = []; w.selName = nm; S.input = "rename"; S.inputText = ""; S.ov = { renaming: nm }; return EV.newFolder; }
+    case "shift cmd .": S.hiddenShown = !S.hiddenShown; return EV.hidden;
+    case "cmd 1": w.view = "icon"; return EV.view;
+    case "cmd 2": w.view = "list"; return EV.view;
+    case "cmd 3": w.view = "column"; return EV.view;
+    case "cmd 4": w.view = "gallery"; return EV.view;
+    case "opt cmd P": w.pathbar = !w.pathbar; return EV.pathbar;
+    case "opt cmd S": w.sidebar = !w.sidebar; return EV.sidebar;
+    case "cmd /": w.status = !w.status; return EV.statusbar;
+    case "cmd T": w.tabs++; return EV.ftab;
+    case "cmd W": if (w.tabs > 1) { w.tabs--; return EV.tabClose; } a.wins.splice(a.front, 1); a.front = Math.max(0, a.wins.length - 1); return EV.winClose;
+    case "cmd A": w.selAll = true; return EV.selAllFiles;
+  }
+  return null;
+}
+
+/* ---------- system-wide ---------- */
+function sysKeys(S, id) {
+  const a = A(S, S.front); const w = W(S);
+  switch (id) {
+    case "cmd Space": S.overlay = "spotlight"; S.input = "spotlight"; S.inputText = ""; return EV.spotlight;
+    case "cmd Tab": {
+      const next = S.mru.find(x => x !== S.front && A(S, x).running);
+      ui.switcherUntil = Date.now() + 900; setTimeout(render, 950);
+      if (!next) return EV.appSwitch;
+      activate(S, next); return EV.appSwitch;
+    }
+    case "cmd `": case "cmd <": if (a.wins.length < 2) return EV.oneWin; a.front = (a.front + 1) % a.wins.length; return EV.winCycle;
+    case "cmd Q": if (S.front === "finder") return EV.noQuit; a.running = false; a.wins = []; a.min = []; frontAfter(S); return EV.quit;
+    case "cmd H": a.hidden = true; frontAfter(S); return EV.hide;
+    case "opt cmd H": for (const k of Object.keys(S.apps)) if (k !== S.front) S.apps[k].hidden = true; return EV.hideOthers;
+    case "cmd M": if (!w) return EV.nothing; a.min.push(a.wins.splice(a.front, 1)[0]); a.front = Math.max(0, a.wins.length - 1); return EV.minimize;
+    case "opt cmd W": a.wins = []; return EV.closeAll;
+    case "ctrl cmd F": case "fn F": if (!w) return EV.nothing; w.layout = w.layout === "full" ? null : "full"; return EV.fullscreen;
+    case "fn ctrl Left": if (!w) return EV.nothing; w.layout = "left"; return EV.tileL;
+    case "fn ctrl Right": if (!w) return EV.nothing; w.layout = "right"; return EV.tileR;
+    case "fn ctrl F": if (!w) return EV.nothing; w.layout = "fill"; return EV.tileF;
+    case "opt cmd Esc": S.overlay = "forcequit"; return EV.forceQuit;
+    case "ctrl cmd Q": S.overlay = "lock"; return EV.lock;
+    case "shift cmd Q": S.overlay = "logout"; return EV.logout;
+    case "ctrl Up": S.overlay = "mission"; return EV.mission;
+    case "ctrl Down": S.overlay = "expose"; return EV.expose;
+    case "ctrl Left": if (S.space <= 1) return EV.spaceEdge; S.space--; return EV.spaceL;
+    case "ctrl Right": if (S.space >= 3) return EV.spaceEdge; S.space++; return EV.spaceR;
+    case "ctrl cmd Space": case "fn E": S.overlay = "emoji"; return EV.emoji;
+    case "fn N": S.overlay = "notif"; return EV.notif;
+    case "fn C": S.overlay = "control"; return EV.control;
+    case "fn Q": S.overlay = "quicknote"; return EV.quickNote;
+    case "fn H": S.showDesktop = !S.showDesktop; return EV.showDesktop;
+    case "shift cmd 3": saveShot(S); return EV.shotFull;
+    case "shift cmd 4": S.overlay = "cross"; S.ov = { mode: "area", clip: false }; return EV.shotSel;
+    case "ctrl shift cmd 4": S.overlay = "cross"; S.ov = { mode: "area", clip: true }; return EV.shotSel;
+    case "shift cmd 5": S.overlay = "shotbar"; return EV.shotTool;
+    case "ctrl shift cmd 3": ui.flashUntil = Date.now() + 400; S.clip = { image: "Full screen" }; toast("Screenshot copied to the clipboard"); return EV.clipFull;
+    case "cmd ,": S.overlay = "settings"; S.ov = { app: APP_NAME[S.front] }; return EV.settings;
+  }
+  return null;
+}
+function saveShot(S) {
+  S.screenshots++; ui.flashUntil = Date.now() + 400;
+  const d = new Date(); const pad = n => String(n).padStart(2, "0");
+  const nm = `Screenshot ${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} at ${pad(d.getHours())}.${pad(d.getMinutes())}.${pad(d.getSeconds())}.png`;
+  S.fs[HOME + "/Desktop"].push(Fl(uniqueName(S, HOME + "/Desktop", nm)));
+  toast("Screenshot saved to the Desktop", true);
+}
+
+/* ---------- typing into fields ---------- */
+const SIM_APPS = { safari: "Safari", textedit: "TextEdit", finder: "Finder" };
+const SPOT_APPS = ["Safari", "TextEdit", "Finder", "Calculator", "Calendar", "Notes", "System Settings", "Terminal"];
+function spotResults(q) { q = q.trim().toLowerCase(); if (!q) return []; return SPOT_APPS.filter(n => n.toLowerCase().startsWith(q)).concat(SPOT_APPS.filter(n => !n.toLowerCase().startsWith(q) && n.toLowerCase().includes(q))); }
+function getText(S) { if (S.input === "find") { const w = W(S); return (w && w.find && w.find.q) || ""; } return S.inputText; }
+function setText(S, v) { if (S.input === "find") { const w = W(S); if (w && w.find) w.find.q = v; return; } S.inputText = v; }
+function cancelInput(S) {
+  const m = S.input; S.input = null;
+  if (m === "spotlight" || m === "goto") S.overlay = null;
+  if (m === "find") { const w = W(S); if (w) w.find = null; }
+  if (m === "rename") S.ov = {};
+}
+function submitInput(S) {
+  const m = S.input, txt = S.inputText.trim();
+  if (m === "spotlight") {
+    S.input = null; S.overlay = null;
+    const hit = spotResults(txt)[0]; if (!hit) return EV.nothing;
+    const key = Object.keys(SIM_APPS).find(k => SIM_APPS[k] === hit);
+    if (!key) { toast(`${hit} isn't part of this practice Mac`); return EV.nothing; }
+    activate(S, key, true); return EV.launch;
+  }
+  if (m === "address") {
+    S.input = null; const tab = TAB(S); if (!tab || !txt) return EV.nothing;
+    const url = txt.replace(/^https?:\/\//, "").toLowerCase();
+    tab.back.push({ title: tab.title, url: tab.url }); tab.fwd = []; tab.url = url; tab.title = titleFor(url); SW(S).reload++;
+    S.history.unshift(tab.title); return EV.go;
+  }
+  if (m === "find") { const d = D(S); if (d) return findStep(d, 1); const w = SW(S); if (w) toast(`${w.find && w.find.q ? 3 : 0} matches`); return EV.findNext; }
+  if (m === "rename") {
+    const w = FW(S); const from = S.ov.renaming; S.input = null; S.ov = {};
+    if (!w || !from || !txt) return EV.cancel;
+    let to = txt; const dot = from.lastIndexOf(".");
+    if (dot > 0 && !txt.includes(".")) to = txt + from.slice(dot);
+    to = to === from ? from : uniqueName(S, w.path, to);
+    renameFS(S, w.path, from, to); w.selName = to; return EV.renamed;
+  }
+  if (m === "goto") {
+    S.input = null; S.overlay = null; const w = FW(S); if (!w) return EV.nothing;
+    let p = txt.replace(/\/+$/, ""); if (p.startsWith("~")) p = HOME + p.slice(1);
+    const keys = Object.keys(S.fs); const low = s => s.toLowerCase();
+    const cands = p.startsWith("/") ? [p] : [HOME + "/" + p, "/" + p, "/Applications/" + p, w.path + "/" + p];
+    for (const c of cands) { const k = keys.find(k => low(k) === low(c)); if (k) { goPath(S, w, k); return EV.went; } }
+    toast("That folder doesn't exist"); return EV.notFound;
+  }
+  return EV.nothing;
+}
+function inputKey(S, id, c) {
+  if (id === "Esc") { cancelInput(S); return EV.cancel; }
+  if (id === "Return") return submitInput(S);
+  if (id === "Delete") { setText(S, getText(S).slice(0, -1)); return EV.type; }
+  if (id === "Space" || id === "shift Space") { setText(S, getText(S) + " "); return EV.type; }
+  if (isTyping(c)) { setText(S, getText(S) + charOf(c)); return EV.type; }
+  return undefined;
+}
+
+/* ---------- overlays ---------- */
+function overlayKey(S, id) {
+  const o = S.overlay;
+  if (o === "lock") { S.overlay = null; return EV.unlock; }
+  if (id === "Esc") { S.overlay = null; S.ov = {}; return o === "cross" || o === "logout" ? EV.cancel : EV.close; }
+  if (o === "quicklook" && id === "Space") { S.overlay = null; return EV.close; }
+  if (o === "cross") {
+    if (id === "Space") { S.ov.mode = S.ov.mode === "window" ? "area" : "window"; return EV.shotWin; }
+    if (id === "Return") return EV.nothing;
+  }
+  if (id === "Return") {
+    if (o === "save") { const d = D(S); if (d) { d.name = S.ov.name; d.saved = true; d.edited = false; } S.overlay = null; return EV.saved; }
+    if (o === "emptytrash") { S.trash = []; S.overlay = null; return EV.emptied; }
+    if (o === "logout") { S.overlay = "lock"; return EV.loggedOut; }
+    if (o === "forcequit") { const k = S.mru.find(x => x !== "finder" && A(S, x).running); if (k) { const a = A(S, k); a.running = false; a.wins = []; a.min = []; if (S.front === k) frontAfter(S); } S.overlay = null; return EV.forced; }
+    if (o === "saveas") { S.overlay = null; return EV.saved; }
+    S.overlay = null; return EV.close;
+  }
+  const toggles = { mission: ["ctrl Up"], expose: ["ctrl Down"], notif: ["fn N"], control: ["fn C"], emoji: ["fn E", "ctrl cmd Space"], quicknote: ["fn Q"], settings: ["cmd W"], shotbar: ["shift cmd 5"] };
+  if (toggles[o] && toggles[o].includes(id)) { S.overlay = null; return EV.close; }
+  return undefined;
+}
+
+function dispatch(S, id, c) {
+  if (S.overlay === "lock") { S.overlay = null; return EV.unlock; }
+  if (S.input) {
+    const r = inputKey(S, id, c); if (r !== undefined) return r;
+    if (S.input !== "find") cancelInput(S);
+  }
+  if (S.overlay) {
+    const r = overlayKey(S, id); if (r !== undefined) return r;
+    if (S.overlay !== "lock") { S.overlay = null; S.ov = {}; }
+  }
+  if (S.space !== 1 && !/^ctrl (Left|Right|Up|Down)$/.test(id)) { /* windows live on Desktop 1 */ }
+  const r = S.front === "safari" ? safariKeys(S, id) : S.front === "textedit" ? editKeys(S, id, c) : finderKeys(S, id);
+  if (r) return r;
+  return sysKeys(S, id);
+}
+
+/* ================= the parcours ================= */
+const PACK = "Packing list\nPassport\nPhone charger\nSunscreen\nHeadphones";
+const LETTER = "Dear team,\nThe quarterly numbers are in and they look strong.\nRevenue grew twelve percent over last year.\nThanks for all the hard work.\nBest, Alex";
+const TABS5 = [["Inbox (3) – Mail", "mail.example.com"], ["Weather – Zurich", "weather.example.com"], ["Pasta recipes", "recipes.example.com"], ["News", "news.example.com"], ["Flight check-in", "airline.example.com"]];
+const docE = S => ensure(S, "textedit", () => mkDoc("Letter", LETTER));
+const caretAt = (d, p) => { d.caret = d.anchor = p; };
+const at = (d, str, off = 0) => d.text.indexOf(str) + off;
+const tabTitle = S => (TAB(S) || {}).title || "";
+const fsel = S => (FW(S) || {}).selName;
+const fpath = S => (FW(S) || {}).path || "";
+const typeHint = txt => `type <b>${esc(txt)}</b>, then ${kc("return", 1, 1)}`;
+
+const STAGES = [
+  {
+    id: "edit", name: "Editing basics", app: "TextEdit",
+    setup(S) { S.apps.textedit.wins = [mkDoc("Packing list", PACK)]; S.apps.safari.wins = [mkSafari([TABS5[1]])]; S.apps.finder.wins = []; activate(S, "textedit"); },
+    tasks: [
+      { t: "Select all the text in the packing list.", k: "cmd A", goal: S => { const d = D(S); return d && d.name === "Packing list" && rng(d)[0] === 0 && rng(d)[1] === d.text.length; } },
+      { t: "Copy it.", k: "cmd C", goal: S => S.clip && S.clip.text === PACK },
+      { t: "Open a new, empty document.", k: "cmd N", goal: S => { const d = D(S); return d && d.text === "" && A(S, "textedit").wins.length === 2; } },
+      { t: "Paste the list into the new document.", k: "cmd V", goal: S => { const d = D(S); return d && !d.saved && d.text.includes("Passport"); } },
+      { t: "Undo the paste.", k: "cmd Z", goal: S => { const d = D(S); return d && !d.saved && d.text === ""; } },
+      { t: "Changed your mind. Redo it.", k: "shift cmd Z", goal: S => { const d = D(S); return d && !d.saved && d.text.includes("Passport"); } },
+      { t: "Save the new document. A Save sheet appears: confirm it with Return.", k: "cmd S", ok: "Return", hint: () => `${comboHTML("cmd S", 1)} then ${kc("return", 1, 1)}`, solve: ["cmd S", "Return"], goal: S => { const d = D(S); return d && d.saved && !d.edited && d.text.includes("Passport") && d.name !== "Packing list"; } },
+      { t: "Close this document window.", k: "cmd W", goal: S => A(S, "textedit").wins.length === 1 && S.front === "textedit" },
+      { t: "“Phone charger” is selected. Make it bold.", k: "cmd B", pre(S) { const d = ensure(S, "textedit", () => mkDoc("Packing list", PACK)); const i = d.text.indexOf("Phone charger"); if (i >= 0) { d.anchor = i; d.caret = i + 13; } }, goal: S => { const d = D(S); if (!d) return false; const i = d.text.indexOf("Phone charger"); return i >= 0 && d.marks.slice(i, i + 13).every(m => m.includes("b")); } },
+      { t: "Make it italic as well.", k: "cmd I", goal: S => { const d = D(S); const i = d ? d.text.indexOf("Phone charger") : -1; return i >= 0 && d.marks.slice(i, i + 13).every(m => m.includes("i")); } },
+      { t: "And underline it.", k: "cmd U", goal: S => { const d = D(S); const i = d ? d.text.indexOf("Phone charger") : -1; return i >= 0 && d.marks.slice(i, i + 13).every(m => m.includes("u")); } },
+      { t: "Cut the selected words.", k: "cmd X", goal: S => { const d = D(S); return d && !d.text.includes("Phone charger") && S.clip && S.clip.text === "Phone charger"; } },
+      { t: "Paste them back, but without the bold/italic/underline formatting.", k: "opt shift cmd V", goal: S => { const d = D(S); const i = d ? d.text.indexOf("Phone charger") : -1; return i >= 0 && d.marks.slice(i, i + 13).every(m => m === ""); } },
+      { t: "Save the changes.", k: "cmd S", goal: (S, ev) => ev === EV.saved && D(S) && !D(S).edited },
+      { t: "Make a copy under a new name (Duplicate / Save As).", k: "shift cmd S", goal: (S, ev) => ev === EV.saveAs },
+      { t: "Open the Print dialog.", k: "cmd P", goal: (S, ev) => ev === EV.print },
+      { t: "Open a different file.", k: "cmd O", goal: (S, ev) => ev === EV.open },
+    ],
+  },
+  {
+    id: "text", name: "Moving through text", app: "TextEdit",
+    setup(S) { S.apps.textedit.wins = [mkDoc("Letter", LETTER)]; S.apps.safari.wins = []; activate(S, "textedit"); },
+    tasks: [
+      { t: "Your cursor is in the middle of line 2. Jump to the end of that line.", k: "cmd Right|ctrl E", pre(S, X) { const d = docE(S); caretAt(d, at(d, "numbers")); X.t = lineEnd(d.text, d.caret); }, goal: (S, ev, X) => { const d = D(S); return d && d.caret === X.t && d.anchor === X.t; } },
+      { t: "Jump to the start of the line.", k: "cmd Left|ctrl A", pre(S, X) { const d = docE(S); X.t = lineStart(d.text, at(d, "numbers")); }, goal: (S, ev, X) => { const d = D(S); return d && d.caret === X.t && d.anchor === X.t; } },
+      { t: "Move the cursor forward by one whole word.", k: "opt Right", pre(S, X) { const d = docE(S); const p = at(d, "The quarterly"); caretAt(d, p); X.t = wordRight(d.text, p); }, goal: (S, ev, X) => { const d = D(S); return d && d.caret === X.t && d.anchor === X.t; } },
+      { t: "Move back by one word.", k: "opt Left", pre(S, X) { const d = docE(S); caretAt(d, at(d, "quarterly", 9)); X.t = at(d, "quarterly"); }, goal: (S, ev, X) => { const d = D(S); return d && d.caret === X.t && d.anchor === X.t; } },
+      { t: "Jump to the very top of the document.", k: "cmd Up", pre(S) { const d = docE(S); caretAt(d, at(d, "Revenue")); }, goal: S => { const d = D(S); return d && d.caret === 0 && d.anchor === 0; } },
+      { t: "Jump to the very bottom.", k: "cmd Down", goal: S => { const d = D(S); return d && d.caret === d.text.length && d.anchor === d.caret; } },
+      { t: "Select from the cursor back to the start of the line.", k: "shift cmd Left", pre(S, X) { const d = docE(S); X.p = at(d, " twelve"); caretAt(d, X.p); X.t = lineStart(d.text, X.p); }, goal: (S, ev, X) => { const d = D(S); return d && d.anchor === X.p && d.caret === X.t; } },
+      { t: "Select just the next word.", k: "opt shift Right", pre(S, X) { const d = docE(S); X.p = at(d, "twelve"); caretAt(d, X.p); }, goal: (S, ev, X) => { const d = D(S); return d && d.anchor === X.p && d.caret === X.p + 6; } },
+      { t: "Delete the whole word before the cursor (“strong”) in one go.", k: "opt Delete", pre(S) { const d = docE(S); caretAt(d, at(d, "strong", 6)); }, goal: S => { const d = D(S); return d && d.text.includes("they look .") && d.text.includes("Revenue"); } },
+      { t: "Delete everything from the cursor back to the start of its line.", k: "cmd Delete", pre(S) { const d = docE(S); caretAt(d, at(d, " the hard work")); }, goal: S => { const d = D(S); return d && d.text.includes("\n the hard work."); } },
+      { t: "Delete the character to the right of the cursor (forward delete).", k: "fn Delete|ctrl D", hint: () => `${comboHTML("fn Delete", 1)} (on-screen fn, then delete)`, pre(S) { const d = docE(S); caretAt(d, at(d, "Alex")); }, goal: S => { const d = D(S); return d && /Best, lex$/.test(d.text); } },
+      { t: "Delete from the cursor to the end of the line.", k: "ctrl K", pre(S) { const d = docE(S); caretAt(d, at(d, " twelve")); }, goal: S => { const d = D(S); return d && d.text.includes("Revenue grew\n"); } },
+      { t: "“quarterly” is selected. Look it up in the dictionary.", k: "ctrl cmd D", pre(S) { const d = docE(S); const p = at(d, "quarterly"); d.anchor = p; d.caret = p + 9; }, goal: (S, ev) => ev === EV.dict },
+      { t: "Open the Find bar.", k: "cmd F", goal: S => S.input === "find" && D(S) && D(S).find },
+      { t: "Type the word to search for: the", keep: true, type: true, hint: () => `type <b>the</b>`, solve: S => { const d = D(S); if (d) { d.find = { q: "the" }; S.input = "find"; } }, goal: S => { const d = D(S); return d && d.find && d.find.q.toLowerCase() === "the"; } },
+      { t: "Jump to the next match.", k: "cmd G|Return", keep: true, goal: (S, ev) => ev === EV.findNext },
+      { t: "Jump back to the previous match.", k: "shift cmd G", keep: true, goal: (S, ev) => ev === EV.findPrev },
+    ],
+  },
+  {
+    id: "tabs", name: "Tabs & windows", app: "Safari",
+    setup(S) { S.apps.safari.wins = [mkSafari(TABS5)]; S.apps.textedit.wins = [mkDoc("Notes", "Buy milk")]; activate(S, "safari"); },
+    tasks: [
+      { t: "Open a new tab.", k: "cmd T", goal: S => { const w = SW(S); return w && w.tabs.length === 6 && tabTitle(S) === "Start Page"; } },
+      { t: "Close it again.", k: "cmd W", goal: S => { const w = SW(S); return w && w.tabs.length === 5 && !w.tabs.some(t => t.title === "Start Page"); } },
+      { t: "You're on “Inbox”. Go to the next tab.", k: "ctrl Tab|shift cmd ]", pre(S) { const w = SW(S); if (w) w.active = 0; }, goal: S => tabTitle(S).startsWith("Weather") },
+      { t: "Go back to the previous tab.", k: "ctrl shift Tab|shift cmd [", goal: S => tabTitle(S).startsWith("Inbox") },
+      { t: "Jump straight to the 4th tab.", k: "cmd 4", goal: S => tabTitle(S) === "News" },
+      { t: "Jump to the last tab.", k: "cmd 9", goal: S => tabTitle(S) === "Flight check-in" },
+      { t: "Close the “Pasta recipes” tab. Switch to it first.", k: "cmd W", ok: "cmd 3|ctrl Tab|ctrl shift Tab|shift cmd ]|shift cmd [|cmd 1|cmd 2|cmd 4|cmd 5|cmd 9", hint: () => `${comboHTML("cmd 3", 1)} then ${comboHTML("cmd W", 1)}`, solve: ["cmd 3", "cmd W"], goal: S => { const w = SW(S); return w && w.tabs.length === 4 && !w.tabs.some(t => t.title === "Pasta recipes"); } },
+      { t: "Oops. Bring the tab you just closed back.", k: "shift cmd T|cmd Z", goal: S => tabTitle(S) === "Pasta recipes" },
+      { t: "Close every tab except “Inbox”, one by one.", k: "cmd W", ok: "cmd 1|cmd 2|cmd 3|cmd 4|cmd 5|cmd 9|ctrl Tab|ctrl shift Tab|shift cmd ]|shift cmd [", hint: () => `switch with ${comboHTML("ctrl Tab", 1)} or ${comboHTML("cmd 2", 1)}, close with ${comboHTML("cmd W", 1)}`, solve(S) { const w = SW(S); if (w) { w.tabs = w.tabs.filter(t => t.title.startsWith("Inbox")); w.active = 0; } }, goal: S => { const w = SW(S); return w && w.tabs.length === 1 && w.tabs[0].title.startsWith("Inbox"); } },
+      { t: "Open a second Safari window.", k: "cmd N", goal: S => A(S, "safari").wins.length === 2 && A(S, "safari").front === 1 },
+      { t: "Switch back to the first window (the one with Inbox).", k: "cmd `|cmd <", goal: S => tabTitle(S).startsWith("Inbox") && A(S, "safari").wins.length === 2 },
+      { t: "Open a private browsing window.", k: "shift cmd N", goal: S => { const w = SW(S); return w && w.priv; } },
+      { t: "Close all of Safari's windows at once.", k: "opt cmd W", goal: S => A(S, "safari").running && A(S, "safari").wins.length === 0 },
+    ],
+  },
+  {
+    id: "browse", name: "Browsing", app: "Safari",
+    setup(S) {
+      S.apps.safari.wins = [mkSafari([mkTab("Keyboard – Encyclopedia", "encyclopedia.example.org/wiki/keyboard", [{ title: "keyboard – Search", url: "search.example.com/?q=keyboard" }])])];
+      S.history = ["Keyboard – Encyclopedia", "keyboard – Search", "Weather – Zurich", "Inbox (3) – Mail"];
+      activate(S, "safari");
+    },
+    tasks: [
+      { t: "Put the cursor in the address bar.", k: "cmd L", goal: S => S.input === "address" },
+      { t: "Type example.com and press Return.", keep: true, type: true, hint: () => typeHint("example.com"), solve(S) { S.input = "address"; S.inputText = "example.com"; dispatch(S, "Return", parse("Return")); }, goal: S => (TAB(S) || {}).url === "example.com" },
+      { t: "Go back to the previous page.", k: "cmd [|cmd Left", goal: S => ((TAB(S) || {}).url || "").startsWith("encyclopedia") },
+      { t: "Go forward again.", k: "cmd ]|cmd Right", goal: S => (TAB(S) || {}).url === "example.com" },
+      { t: "Go back twice, to the search results.", k: "cmd [|cmd Left", solve: ["cmd [", "cmd ["], goal: S => ((TAB(S) || {}).url || "").startsWith("search") },
+      { t: "Reload the page.", k: "cmd R", goal: (S, ev) => ev === EV.reload },
+      { t: "Zoom in twice.", k: "cmd =|cmd +|shift cmd =", solve: ["cmd =", "cmd ="], pre(S) { const w = SW(S); if (w) w.zoom = 100; }, goal: S => { const w = SW(S); return w && w.zoom >= 125; } },
+      { t: "Zoom out once.", k: "cmd -", pre(S, X) { const w = SW(S); X.z = w ? w.zoom : 125; }, goal: (S, ev, X) => { const w = SW(S); return w && w.zoom < X.z; } },
+      { t: "Reset the zoom to 100%.", k: "cmd 0", pre(S) { const w = SW(S); if (w && w.zoom === 100) w.zoom = 110; }, goal: S => { const w = SW(S); return w && w.zoom === 100; } },
+      { t: "Bookmark this page.", k: "cmd D", goal: S => S.bookmarks.length > 0 },
+      { t: "Show your browsing history.", k: "cmd Y", goal: S => { const w = SW(S); return w && w.view === "history"; } },
+      { t: "Hide history again.", k: "cmd Y", goal: S => { const w = SW(S); return w && w.view === "page"; } },
+      { t: "Search inside this page.", k: "cmd F", goal: S => { const w = SW(S); return w && w.find; } },
+      { t: "Open the developer tools.", k: "opt cmd I", goal: S => { const w = SW(S); return w && w.dev; } },
+    ],
+  },
+  {
+    id: "files", name: "Files in Finder", app: "Finder",
+    setup(S) { const w = mkFinder(HOME + "/Downloads"); S.apps.finder.wins = [w]; activate(S, "finder"); w.selName = "beach.jpg"; },
+    tasks: [
+      { t: "beach.jpg is selected. Preview it with Quick Look.", k: "Space", goal: S => S.overlay === "quicklook" },
+      { t: "Close the preview, then select the next file down.", k: "Down", ok: "Space|Esc", keep: true, hint: () => `${kc("space", 1, 1)} then ${kc("↓", 0, 1)}`, solve: ["Space", "Down"], goal: S => !S.overlay && fsel(S) === "Invoice-0423.pdf" },
+      { t: "Show the info panel for Invoice-0423.pdf.", k: "cmd I", goal: (S, ev) => ev === EV.info },
+      { t: "Duplicate the invoice.", k: "cmd D", goal: S => (S.fs[HOME + "/Downloads"] || []).some(i => i.name === "Invoice-0423 copy.pdf") },
+      { t: "Move the copy to the Trash.", k: "cmd Delete", pre(S) { const w = FW(S); if (w && S.fs[w.path].some(i => i.name === "Invoice-0423 copy.pdf")) w.selName = "Invoice-0423 copy.pdf"; }, goal: S => S.trash.includes("Invoice-0423 copy.pdf") },
+      { t: "Create a new folder.", k: "shift cmd N", goal: S => S.input === "rename" && /^untitled folder/.test(S.ov.renaming || "") },
+      { t: "Name it Taxes and press Return.", keep: true, type: true, hint: () => typeHint("Taxes"), solve(S) { if (S.input !== "rename") return; S.inputText = "Taxes"; dispatch(S, "Return", parse("Return")); }, goal: S => (S.fs[fpath(S)] || []).some(i => i.dir && i.name.toLowerCase() === "taxes") && S.input !== "rename" },
+      { t: "Open the Taxes folder.", k: "cmd Down|cmd O", pre(S) { const w = FW(S); const it = w && (S.fs[w.path] || []).find(i => i.dir && i.name.toLowerCase() === "taxes"); if (it) w.selName = it.name; }, goal: S => /\/taxes$/i.test(fpath(S)) },
+      { t: "Go back up to Downloads.", k: "cmd Up|cmd [", goal: S => fpath(S) === HOME + "/Downloads" },
+      { t: "notes.txt is selected. Start renaming it.", k: "Return", pre(S) { const w = FW(S); if (w) w.selName = "notes.txt"; }, goal: S => S.input === "rename" && S.ov.renaming === "notes.txt" },
+      { t: "Call it ideas and press Return.", keep: true, type: true, hint: () => typeHint("ideas"), solve(S) { if (S.input !== "rename") return; S.inputText = "ideas"; dispatch(S, "Return", parse("Return")); }, goal: S => (S.fs[HOME + "/Downloads"] || []).some(i => i.name === "ideas.txt") },
+      { t: "Show hidden files (the ones starting with a dot).", k: "shift cmd .", goal: S => S.hiddenShown },
+      { t: "Switch to icon view.", k: "cmd 1", goal: S => (FW(S) || {}).view === "icon" },
+      { t: "Now column view.", k: "cmd 3", goal: S => (FW(S) || {}).view === "column" },
+      { t: "And back to list view.", k: "cmd 2", goal: S => (FW(S) || {}).view === "list" },
+      { t: "Empty the Trash. Confirm with Return.", k: "shift cmd Delete|opt shift cmd Delete", ok: "Return", hint: () => `${comboHTML("shift cmd Delete", 1)} then ${kc("return", 1, 1)}`, solve: ["shift cmd Delete", "Return"], goal: S => S.trash.length === 0 },
+    ],
+  },
+  {
+    id: "folders", name: "Getting around Finder", app: "Finder",
+    setup(S) { S.apps.finder.wins = [mkFinder(HOME + "/Downloads")]; activate(S, "finder"); goPath(S, W(S), HOME + "/Downloads"); W(S).back = []; },
+    tasks: [
+      { t: "Go to your Home folder.", k: "shift cmd H", goal: S => fpath(S) === HOME },
+      { t: "Go to Applications.", k: "shift cmd A", goal: S => fpath(S) === "/Applications" },
+      { t: "Go to the Desktop folder.", k: "shift cmd D", goal: S => fpath(S) === HOME + "/Desktop" },
+      { t: "Go to Documents.", k: "shift cmd O", goal: S => fpath(S) === HOME + "/Documents" },
+      { t: "Go to Downloads.", k: "opt cmd L", goal: S => fpath(S) === HOME + "/Downloads" },
+      { t: "Go back to the folder you were just in.", k: "cmd [", goal: S => fpath(S) === HOME + "/Documents" },
+      { t: "Go forward again.", k: "cmd ]", goal: S => fpath(S) === HOME + "/Downloads" },
+      { t: "Open “Go to Folder”.", k: "shift cmd G", goal: S => S.input === "goto" },
+      { t: "Type Pictures and press Return.", keep: true, type: true, hint: () => typeHint("Pictures"), solve(S) { S.input = "goto"; S.overlay = "goto"; S.inputText = "Pictures"; dispatch(S, "Return", parse("Return")); }, goal: S => fpath(S) === HOME + "/Pictures" },
+      { t: "Go up one level, to the enclosing folder.", k: "cmd Up", goal: S => fpath(S) === HOME },
+      { t: "Show the path bar at the bottom.", k: "opt cmd P", goal: S => (FW(S) || {}).pathbar },
+      { t: "Hide the sidebar.", k: "opt cmd S", goal: S => FW(S) && !FW(S).sidebar },
+      { t: "Show the status bar.", k: "cmd /", goal: S => (FW(S) || {}).status },
+      { t: "Open a new Finder tab.", k: "cmd T", goal: S => (FW(S) || {}).tabs >= 2 },
+      { t: "Open a new Finder window.", k: "cmd N", goal: S => A(S, "finder").wins.length >= 2 },
+      { t: "Open “Connect to Server”.", k: "cmd K", goal: (S, ev) => ev === EV.connect },
+      { t: "Open Finder's settings.", k: "cmd ,", goal: (S, ev) => ev === EV.settings },
+    ],
+  },
+  {
+    id: "apps", name: "Apps & desktop", app: "macOS",
+    setup(S) {
+      S.apps.safari.wins = [mkSafari([TABS5[0], TABS5[1]])]; S.apps.textedit.wins = [mkDoc("Notes", "Call the bank\nBook dentist")]; S.apps.finder.wins = [mkFinder(HOME)];
+      goPath(S, S.apps.finder.wins[0], HOME); S.apps.finder.wins[0].back = [];
+      S.mru = ["finder", "textedit", "safari"]; activate(S, "textedit"); activate(S, "safari");
+    },
+    tasks: [
+      { t: "Switch to the app you used just before (TextEdit).", k: "cmd Tab", goal: S => S.front === "textedit" },
+      { t: "Switch back to Safari.", k: "cmd Tab", goal: S => S.front === "safari" },
+      { t: "Open Spotlight.", k: "cmd Space", goal: S => S.overlay === "spotlight" },
+      { t: "Type Finder and press Return to open it.", keep: true, type: true, hint: () => typeHint("Finder"), solve(S) { S.overlay = "spotlight"; S.input = "spotlight"; S.inputText = "Finder"; dispatch(S, "Return", parse("Return")); }, goal: (S, ev) => ev === EV.launch && S.front === "finder" },
+      { t: "Hide Finder.", k: "cmd H", pre(S) { activate(S, "finder"); }, goal: S => A(S, "finder").hidden },
+      { t: "Hide every app except the one in front.", k: "opt cmd H", pre(S) { for (const k in S.apps) S.apps[k].hidden = false; activate(S, "safari"); }, goal: S => Object.keys(S.apps).every(k => k === S.front || !A(S, k).running || A(S, k).hidden) },
+      { t: "Minimize this window to the Dock.", k: "cmd M", pre(S) { ensure(S, "safari", () => mkSafari([TABS5[0]])); }, goal: S => A(S, S.front).min.length > 0 },
+      { t: "Open this app's settings.", k: "cmd ,", goal: (S, ev) => ev === EV.settings },
+      { t: "Make the window full screen.", k: "ctrl cmd F|fn F", pre(S) { const a = A(S, "safari"); while (a.min.length) a.wins.push(a.min.pop()); activate(S, "safari"); const w = W(S); if (w) w.layout = null; }, goal: S => (W(S) || {}).layout === "full" },
+      { t: "Leave full screen again.", k: "ctrl cmd F|fn F", goal: (S, ev) => ev === EV.fullscreen && W(S) && W(S).layout !== "full" },
+      { t: "Tile the window to the left half of the screen.", k: "ctrl fn Left", hint: () => `${comboHTML("ctrl fn Left", 1)} (fn: use the on-screen key)`, goal: S => (W(S) || {}).layout === "left" },
+      { t: "Move it to the right half.", k: "ctrl fn Right", goal: S => (W(S) || {}).layout === "right" },
+      { t: "Make it fill the whole screen (not full screen mode).", k: "ctrl fn F", goal: S => (W(S) || {}).layout === "fill" },
+      { t: "Safari now has two windows. Switch to the other one.", k: "cmd `|cmd <", pre(S) { const a = A(S, "safari"); if (a.wins.length < 2) { a.wins.push(mkSafari([TABS5[3]])); a.front = 0; } }, goal: (S, ev) => ev === EV.winCycle },
+      { t: "Switch to TextEdit using Cmd-Tab, then quit it.", k: "cmd Q", ok: "cmd Tab", hint: () => `${comboHTML("cmd Tab", 1)} then ${comboHTML("cmd Q", 1)}`, solve: ["cmd Tab", "cmd Q"], pre(S) { S.mru = ["safari", "textedit", "finder"]; A(S, "textedit").hidden = false; }, goal: S => !A(S, "textedit").running },
+      { t: "An app has frozen. Open the Force Quit window.", k: "opt cmd Esc", goal: S => S.overlay === "forcequit" },
+      { t: "Open Mission Control to see everything.", k: "ctrl Up", goal: S => S.overlay === "mission" },
+      { t: "Show only the windows of the current app.", k: "ctrl Down", goal: S => S.overlay === "expose" },
+      { t: "Move to the desktop on the right.", k: "ctrl Right", pre(S) { S.space = 1; }, goal: S => S.space === 2 },
+      { t: "Move back to the left.", k: "ctrl Left", goal: S => S.space === 1 },
+      { t: "Push all windows aside to see the desktop.", k: "fn H", hint: () => `${comboHTML("fn H", 1)} (on-screen fn)`, pre(S) { S.showDesktop = false; }, goal: S => S.showDesktop },
+      { t: "Lock the screen.", k: "ctrl cmd Q", goal: S => S.overlay === "lock" },
+      { t: "Open the Log Out dialog.", k: "shift cmd Q", pre(S) { S.showDesktop = false; }, goal: S => S.overlay === "logout" },
+      { t: "Don't log out. Cancel it.", k: "Esc", keep: true, goal: (S, ev) => ev === EV.cancel && !S.overlay },
+    ],
+  },
+  {
+    id: "shots", name: "Screenshots & system", app: "macOS",
+    setup(S) { S.apps.safari.wins = [mkSafari([TABS5[1]])]; S.apps.textedit.wins = [mkDoc("Trip ideas", "Lisbon\nKyoto\n")]; activate(S, "safari"); activate(S, "textedit"); },
+    tasks: [
+      { t: "Take a screenshot of the whole screen.", k: "shift cmd 3", pre(S, X) { X.n = S.screenshots; }, goal: (S, ev, X) => S.screenshots > X.n },
+      { t: "Start a screenshot of just part of the screen.", k: "shift cmd 4", goal: S => S.overlay === "cross" && !S.ov.clip },
+      { t: "Switch to capturing a single window instead.", k: "Space", keep: true, goal: S => S.overlay === "cross" && S.ov.mode === "window" },
+      { t: "Cancel the screenshot.", k: "Esc", keep: true, goal: S => !S.overlay },
+      { t: "Open the screenshot & screen-recording toolbar.", k: "shift cmd 5", goal: S => S.overlay === "shotbar" },
+      { t: "Copy the whole screen to the clipboard instead of saving a file.", k: "ctrl shift cmd 3", goal: S => S.clip && S.clip.image },
+      { t: "Copy just a part of the screen to the clipboard.", k: "ctrl shift cmd 4", goal: S => S.overlay === "cross" && S.ov.clip },
+      { t: "Open the emoji picker.", k: "fn E|ctrl cmd Space", goal: S => S.overlay === "emoji" },
+      { t: "Open Notification Center.", k: "fn N", goal: S => S.overlay === "notif" },
+      { t: "Open Control Center.", k: "fn C", goal: S => S.overlay === "control" },
+      { t: "Jot something down: start a Quick Note.", k: "fn Q", goal: S => S.overlay === "quicknote" },
+    ],
+  },
+];
+
+/* ================= course runtime ================= */
+let S = baseWorld();
+let stageIdx = 0, step = 0, X = {}, snap = null;
+let run = { mistakes: 0, hints: 0, start: Date.now(), done: false };
+let hintShown = false, advancing = false, fb = { cls: "", html: "" };
+let best = store.get("parcours.best", {});
+const ui = { toast: null, toastUntil: 0, toastThumb: false, flashUntil: 0, switcherUntil: 0 };
+function toast(text, thumb) { ui.toast = text; ui.toastThumb = !!thumb; ui.toastUntil = Date.now() + 2200; setTimeout(render, 2300); }
+
+const stage = () => STAGES[stageIdx];
+const task = () => stage().tasks[step];
+const okSet = t => new Set([...(t.k ? t.k.split("|") : []), ...(t.ok ? t.ok.split("|") : [])].map(norm));
+
+function startStage(i) {
+  stageIdx = i; step = 0; S = baseWorld(); stage().setup(S);
+  run = { mistakes: 0, hints: 0, start: Date.now(), done: false };
+  store.set("parcours.stage", i);
+  startStep();
+}
+function startStep() {
+  const t = task(); X = {}; hintShown = false; advancing = false;
+  if (!t.keep) { if (S.input) cancelInput(S); if (S.overlay) { S.overlay = null; S.ov = {}; } }
+  try { t.pre && t.pre(S, X); } catch (e) { console.error(e); }
+  snap = structuredClone({ S, X });
+  fb = { cls: "", html: "" };
+  render();
+}
+function resetStep() { const c = structuredClone(snap); S = c.S; X = c.X; fb = { cls: "", html: "Step reset." }; render(); }
+function act(id, c, viaSolve) {
+  if (run.done || advancing) return;
+  const before = id;
+  const ev = dispatch(S, id, c);
+  const t = task();
+  let ok = false;
+  try { ok = !!t.goal(S, ev, X); } catch (e) { ok = false; }
+  if (viaSolve) { render(); return ok; }
+  if (ok) return complete();
+  const hasMod = c.mods.size > 0;
+  const fine = okSet(t).has(before) || t.type && (isTyping(c) || /^(Space|Delete|Return|shift Space)$/.test(before));
+  if (!ev) fb = { cls: "bad", html: `${comboHTML(before, 1)} doesn't do anything here.` };
+  else if (fine || (!hasMod && ev === EV.type)) fb = { cls: "", html: `${comboHTML(before, 1)} ${esc(ev)}.` };
+  else if (hasMod || ev !== EV.selMove) { run.mistakes++; fb = { cls: "bad", html: `${comboHTML(before, 1)} ${esc(ev)}. That's not what this step needs.` }; }
+  else fb = { cls: "", html: `${esc(ev)}.` };
+  render();
+}
+function complete() {
+  advancing = true;
+  fb = { cls: "good", html: "✓ Done" };
+  render();
+  setTimeout(() => {
+    step++;
+    if (step >= stage().tasks.length) return finishStage();
+    startStep();
+  }, 650);
+}
+function stars() { return run.hints === 0 && run.mistakes <= 1 ? 3 : run.hints <= 3 && run.mistakes <= 5 ? 2 : 1; }
+function finishStage() {
+  run.done = true; run.secs = Math.round((Date.now() - run.start) / 1000); run.stars = stars();
+  const id = stage().id; const prev = best[id] || { stars: 0, secs: Infinity };
+  best[id] = { stars: Math.max(prev.stars, run.stars), secs: Math.min(prev.secs || Infinity, run.secs) };
+  store.set("parcours.best", best);
+  advancing = false; render();
+}
+function showMe() {
+  const t = task(); run.hints++; hintShown = true;
+  const parts = Array.isArray(t.solve) ? t.solve : typeof t.solve === "function" ? null : [t.k.split("|")[0]];
+  let ok = false;
+  if (parts) {
+    for (const p of parts) { const c = parse(p); ok = act(cid(c.mods, c.key), c, true) || ok; if (ok) break; }
+  } else { t.solve(S); try { ok = !!t.goal(S, null, X); } catch {} render(); }
+  if (!ok) { try { ok = !!t.goal(S, null, X); } catch {} }
+  fb = { cls: ok ? "good" : "", html: ok ? "✓ That's how it's done. Moving on." : "Did it for you. Try the hint." };
+  if (ok) { advancing = true; render(); setTimeout(() => { step++; step >= stage().tasks.length ? finishStage() : startStep(); }, 1200); }
+  else render();
+}
+
+/* ================= rendering ================= */
+function render() { renderStages(); renderBrief(); renderScreen(); renderPad(); }
+function renderStages() {
+  $("stages").innerHTML = STAGES.map((st, i) => {
+    const b = best[st.id]; const n = b ? b.stars : 0;
+    return `<button class="stage-chip" data-stage="${i}" aria-current="${i === stageIdx}">${i + 1}. ${esc(st.name)}<span class="stars" aria-label="${n} of 3 stars"><b>${"★".repeat(n)}</b>${"☆".repeat(3 - n)}</span></button>`;
   }).join("");
 }
-function renderStats() {
-  $("sStreak").textContent = session.streak;
-  $("sScore").textContent = `${session.right}/${session.total}`;
-  $("sMastered").textContent = `${cards.filter(x => (boxes[x.id] || 0) >= 3).length}/${cards.length}`;
-}
-function renderSlot() {
-  const slot = $("slot");
-  const on = MOD_ORDER.filter(m => sticky.has(m) || held.has(m));
-  slot.classList.toggle("held", on.length > 0);
-  slot.innerHTML = on.length
-    ? on.map(m => keyCap(MOD_GLYPH[m], m === "fn")).join("") + `<span class="plus">+ now press the key</span>`
-    : `<span class="placeholder">Tap a modifier, let go, then press the key</span>`;
-  document.querySelectorAll("#modRow button").forEach(b => {
-    b.setAttribute("aria-pressed", sticky.has(b.dataset.mod));
-    b.classList.toggle("held", held.has(b.dataset.mod));
-  });
-}
-function renderSheet() {
-  $("sheetBody").innerHTML = CATS.map(c => `<h3>${c}</h3><ul>` + cards.filter(x => x.cat === c).map(x =>
-    `<li><span>${escapeHTML(x.action)}${(boxes[x.id] || 0) >= 3 ? '<span class="box">✓</span>' : ""}</span>${comboHTML(x.answers[0])}</li>`
-  ).join("") + "</ul>").join("");
-}
-
-// ---- deck logic ----
-function pickCard() {
-  const pool = cards.filter(c => active.has(c.cat));
-  const choices = pool.length > 1 ? pool.filter(c => c.id !== lastId) : pool;
-  // Weaker cards come up far more often.
-  const weights = choices.map(c => 1 / Math.pow(2.2, boxes[c.id] || 0));
-  let r = Math.random() * weights.reduce((a, b) => a + b, 0);
-  for (let i = 0; i < choices.length; i++) { r -= weights[i]; if (r <= 0) return choices[i]; }
-  return choices[choices.length - 1];
-}
-function showCard() {
-  current = pickCard(); lastId = current.id;
-  phase = "ask"; sticky.clear(); tapCandidate = null;
-  const card = $("card"); card.classList.remove("good", "bad");
-  $("cat").textContent = current.cat;
-  const b = boxes[current.id] || 0;
-  $("level").textContent = b >= 3 ? "Mastered" : b ? `${b}/3 in a row` : "New";
-  $("action").textContent = current.action;
-  $("note").hidden = true;
-  $("verdict").hidden = true;
-  $("btnNext").hidden = true;
-  $("btnReveal").hidden = false;
-  $("btnClear").hidden = false;
-  renderSlot();
-}
-
-function submit(combo) {
-  const ok = current.ids.has(comboId(combo));
-  const v = $("verdict");
-  if (phase === "result") {            // practice typing it after a miss
-    if (ok) {
-      sticky.clear(); renderSlot();
-      v.querySelector(".practice").textContent = "Nice, that's the one. Press Return for the next card.";
-    } else {
-      sticky.clear();
-      $("slot").innerHTML = `${comboHTML(combo)}<span class="plus">not quite, try again</span>`;
-    }
+function renderBrief() {
+  const st = stage(); const el = $("brief");
+  if (run.done) {
+    const nxt = stageIdx + 1 < STAGES.length;
+    el.className = "brief done";
+    el.innerHTML = `<div class="brief-top"><span>Stage ${stageIdx + 1} · ${esc(st.name)}</span><span>Complete</span></div>
+      <p class="task">Stage cleared.</p>
+      <div class="bigstars" aria-label="${run.stars} of 3 stars">${"★".repeat(run.stars)}${"☆".repeat(3 - run.stars)}</div>
+      <div class="result"><div><b>${Math.floor(run.secs / 60)}:${String(run.secs % 60).padStart(2, "0")}</b><span>Time</span></div><div><b>${run.mistakes}</b><span>Wrong shortcuts</span></div><div><b>${run.hints}</b><span>Hints used</span></div></div>
+      <div class="actions">${nxt ? `<button class="btn primary" data-act="next">Next stage: ${esc(STAGES[stageIdx + 1].name)} ↩</button>` : `<span>That's the whole parcours.</span>`}<button class="btn" data-act="replay">Replay for 3 stars</button></div>`;
     return;
   }
-  phase = "result";
-  session.total++;
-  if (ok) {
-    session.right++; session.streak++;
-    boxes[current.id] = (boxes[current.id] || 0) + 1;
-  } else {
-    session.streak = 0;
-    boxes[current.id] = 0;
+  const t = task();
+  el.className = "brief";
+  const dots = st.tasks.map((_, i) => `<i class="${i < step ? "ok" : i === step ? "now" : ""}"></i>`).join("");
+  const hint = t.hint ? t.hint() : combosHTML(t.k.split("|"), 1);
+  el.innerHTML = `<div class="brief-top"><span>Stage ${stageIdx + 1} · ${esc(st.name)} · ${esc(st.app)}</span><span>Step ${step + 1} / ${st.tasks.length} · ${run.mistakes} wrong</span></div>
+    <div class="dots">${dots}</div>
+    <p class="task">${esc(t.t)}</p>
+    <div class="fb ${fb.cls}">${fb.html || "&nbsp;"}</div>
+    <div class="hintline" ${hintShown ? "" : "hidden"}>Shortcut: ${hint}</div>
+    <div class="actions"><button class="btn" data-act="hint">${hintShown ? "Hint shown" : "Hint"}</button><button class="btn" data-act="show">Show me</button><button class="btn" data-act="reset">Reset step</button></div>`;
+}
+
+const POS = { safari: [5, 7, 66, 76], textedit: [24, 11, 54, 70], finder: [13, 15, 62, 64] };
+function winStyle(w, app) {
+  const L = w.layout;
+  if (L === "full") return "left:0;top:0;width:100%;height:100%";
+  if (L === "left") return "left:0;top:2em;width:50%;height:calc(100% - 2em)";
+  if (L === "right") return "left:50%;top:2em;width:50%;height:calc(100% - 2em)";
+  if (L === "fill") return "left:0;top:2em;width:100%;height:calc(100% - 2em)";
+  const [l, t, ww, h] = POS[app]; return `left:${l}%;top:${t}%;width:${ww}%;height:${h}%`;
+}
+const lights = `<span class="lights"><i></i><i></i><i></i></span>`;
+function renderSafari(w, front) {
+  const tab = w.tabs[w.active] || { title: "", url: "" };
+  const addrFocus = front && S.input === "address";
+  const addr = addrFocus ? (S.inputText ? esc(S.inputText) + '<span class="caret"></span>' : `<span class="selurl">${esc(tab.url || "Search or enter website name")}</span>`) : esc(tab.url || "Search or enter website name");
+  const tabs = w.tabs.length > 1 ? `<div class="tabs">${w.tabs.map((t, i) => `<div class="tab ${i === w.active ? "on" : ""}" data-tab="${i}">${esc(t.title)}</div>`).join("")}</div>` : "";
+  const bm = S.bookmarks.length ? `<div class="bookmarks">${S.bookmarks.map(esc).map(b => `<span>★ ${b}</span>`).join("")}</div>` : "";
+  const find = w.find ? `<div class="findbar">Find on page <span class="q ${front && S.input === "find" ? "" : "idle"}">${esc(w.find.q)}${front && S.input === "find" ? '<span class="caret"></span>' : ""}</span></div>` : "";
+  let body;
+  if (w.view === "history") body = `<div class="page history"><h2>History</h2><ul>${S.history.concat(w.tabs.map(t => t.title)).slice(0, 8).map(h => `<li>${esc(h)}</li>`).join("")}</ul></div>`;
+  else if (tab.title === "Start Page") body = `<div class="page"><h2>Favorites</h2><div class="tiles"><div>Mail</div><div>Weather</div><div>News</div><div>Maps</div></div></div>`;
+  else body = `<div class="page" style="font-size:${w.zoom / 100}em">${w.reload ? `<div class="loading" data-r="${w.reload}"></div>` : ""}<h2>${esc(tab.title)}</h2>${[92, 80, 86, 60, 0, 88, 74, 81, 40].map(n => n ? `<div class="bar" style="width:${n}%"></div>` : "<br>").join("")}</div>`;
+  const dev = w.dev ? `<div class="devtools"><div class="dtabs"><b>Elements</b><span>Console</span><span>Sources</span><span>Network</span></div>&lt;html lang="en"&gt;<br>&nbsp;&nbsp;&lt;body class="page"&gt;…</div>` : "";
+  const zoomBadge = w.zoom !== 100 ? `<small>${w.zoom}%</small>` : "";
+  return `<div class="titlebar">${lights}<span class="navbtns">‹ ›</span><div class="addr ${addrFocus ? "focus" : ""}">${addr}</div>${zoomBadge}${w.priv ? "<small>Private</small>" : ""}</div>${tabs}${bm}${find}${body}${dev}`;
+}
+function renderDoc(d, front) {
+  const [s, e] = rng(d); const has = s !== e;
+  const hits = new Set(); if (d.find && d.find.q) for (const m of findMatches(d.text, d.find.q)) for (let i = m; i < m + d.find.q.length; i++) hits.add(i);
+  let h = "";
+  for (let i = 0; i <= d.text.length; i++) {
+    if (i === d.caret && !has && front) h += '<span class="caret"></span>';
+    if (i === d.text.length) break;
+    const ch = d.text[i]; const cls = [i >= s && i < e ? "s" : "", hits.has(i) ? "h" : "", ...d.marks[i].split("")].filter(Boolean).join(" ");
+    const txt = ch === "\n" ? (cls.includes("s") ? " \n" : "\n") : esc(ch);
+    h += cls ? `<span class="${cls}">${txt}</span>` : txt;
   }
-  store.set("mst.boxes", boxes);
-  sticky.clear();
-  $("slot").innerHTML = comboHTML(combo);
-  showVerdict(ok, false);
+  const find = d.find ? `<div class="findbar">Find <span class="q ${front && S.input === "find" ? "" : "idle"}">${esc(d.find.q)}${front && S.input === "find" ? '<span class="caret"></span>' : ""}</span><small>${findMatches(d.text, d.find.q).length} found</small></div>` : "";
+  return `<div class="titlebar">${lights}<span class="ttl">${esc(d.name)}${d.edited ? " <small>— Edited</small>" : ""}</span><span style="width:4em"></span></div>
+    <div class="toolbar"><span>Helvetica</span><span>Regular</span><span>14</span><span><b>B</b> <i>I</i> <u>U</u></span></div>${find}<div class="doc-body">${h}</div>`;
+}
+function renderFinder(w, front) {
+  const list = items(S, w.path);
+  const renaming = front && S.input === "rename" ? S.ov.renaming : null;
+  const nameHTML = it => (it.name === renaming ? `<span class="rename">${esc(S.inputText || "")}<span class="caret"></span>${S.inputText ? "" : `<span style="opacity:.45">${esc(it.name)}</span>`}</span>` : esc(it.name));
+  const ico = it => `<span class="ico ${it.dir ? "" : "file"} ${it.name.startsWith(".") ? "hid" : ""}"></span>`;
+  const isSel = it => w.selAll || it.name === w.selName;
+  let body;
+  if (!list.length) body = `<div class="ficons" style="color:var(--win-muted)">This folder is empty</div>`;
+  else if (w.view === "icon") body = `<div class="ficons">${list.map(it => `<div class="ficon ${isSel(it) && it.name !== renaming ? "sel" : ""}" data-file="${esc(it.name)}">${ico(it)}<span class="nm">${nameHTML(it)}</span></div>`).join("")}</div>`;
+  else if (w.view === "column") {
+    const par = items(S, parentOf(w.path)); const sel = list.find(i => i.name === w.selName);
+    body = `<div class="fcols"><div class="fcol">${par.map(it => `<div class="${join(parentOf(w.path), it.name) === w.path ? "par" : ""}">${ico(it)}${esc(it.name)}</div>`).join("")}</div><div class="fcol">${list.map(it => `<div class="${isSel(it) && it.name !== renaming ? "sel" : ""}" data-file="${esc(it.name)}">${ico(it)}${nameHTML(it)}</div>`).join("")}</div><div class="fcol" style="display:flex;align-items:center;justify-content:center;color:var(--win-muted)">${sel ? esc(sel.name) : ""}</div></div>`;
+  } else if (w.view === "gallery") {
+    const sel = list.find(i => i.name === w.selName);
+    body = `<div class="gallery"><div class="big"></div><b>${sel ? esc(sel.name) : ""}</b><div class="ficons" style="padding:0">${list.slice(0, 6).map(it => `<div class="ficon ${isSel(it) ? "sel" : ""}" style="width:4em">${ico(it)}</div>`).join("")}</div></div>`;
+  } else body = `<div class="flist"><div class="frow head"><span>Name</span><span>Date Modified</span><span>Size</span></div>${list.map((it, i) => `<div class="frow ${isSel(it) && it.name !== renaming ? "sel" : ""}" data-file="${esc(it.name)}"><span class="nm">${ico(it)}${nameHTML(it)}</span><span>${["Today", "Yesterday", "3 Nov 2026", "28 Oct 2026"][i % 4]}</span><span>${it.dir ? "--" : ["2 MB", "184 KB", "48 MB", "3 KB"][i % 4]}</span></div>`).join("")}</div>`;
+  const side = w.sidebar ? `<div class="sidebar"><div class="h">Favorites</div>${[["Applications", "/Applications"], ["Desktop", HOME + "/Desktop"], ["Documents", HOME + "/Documents"], ["Downloads", HOME + "/Downloads"], ["alex", HOME]].map(([n, p]) => `<a data-go="${p}" class="${w.path === p ? "on" : ""}">${n}</a>`).join("")}<div class="h" style="margin-top:.8em">Locations</div><a data-go="/">Macintosh HD</a></div>` : "";
+  const tabs = w.tabs > 1 ? `<div class="tabs ftabs">${Array.from({ length: w.tabs }, (_, i) => `<div class="tab ${i === w.tabs - 1 ? "on" : ""}">${esc(baseOf(w.path))}</div>`).join("")}</div>` : "";
+  const crumbs = ["Macintosh HD", ...w.path.split("/").filter(Boolean)].join(" › ");
+  return `<div class="titlebar">${lights}<span class="navbtns">‹ ›</span><span class="ttl" style="text-align:left">${esc(baseOf(w.path))}</span><small style="color:var(--win-muted)">${{ icon: "▦ Icons", list: "☰ List", column: "▥ Columns", gallery: "▭ Gallery" }[w.view]}</small></div>${tabs}
+    <div class="fbody">${side}<div class="fmain">${body}${w.pathbar ? `<div class="pathbar">${esc(crumbs)}</div>` : ""}${w.status ? `<div class="statusbar">${list.length} items, 412 GB available</div>` : ""}</div></div>`;
+}
+function renderWin(app, w, front) {
+  const inner = w.kind === "safari" ? renderSafari(w, front) : w.kind === "textedit" ? renderDoc(w, front) : renderFinder(w, front);
+  return `<div class="win ${front ? "" : "bg"} ${w.layout === "full" ? "full" : ""} ${w.priv ? "priv" : ""}" style="${winStyle(w, app)}">${inner}</div>`;
+}
+function panel(title, body, buttons) {
+  return `<div class="panel"><h4>${title}</h4>${body}<div class="row">${(buttons || []).map(([l, d]) => `<span class="pb ${d ? "def" : ""}">${l}</span>`).join("")}</div></div>`;
+}
+const dockIcon = { finder: ["ic-finder", "F"], safari: ["ic-safari", ""], textedit: ["ic-textedit", "T"] };
+function renderOverlay() {
+  const o = S.overlay; if (!o) return "";
+  const w = W(S);
+  switch (o) {
+    case "spotlight": {
+      const res = spotResults(S.inputText).slice(0, 5);
+      return `<div class="spot"><div class="q">⌕ ${S.inputText ? esc(S.inputText) + '<span class="caret"></span>' : '<span class="caret"></span><span class="ph">Spotlight Search</span>'}</div>${res.length ? `<ul>${res.map((r, i) => `<li class="${i ? "" : "on"}"><span>${esc(r)}</span><small>Application</small></li>`).join("")}</ul>` : ""}</div>`;
+    }
+    case "mission": case "expose": {
+      const wins = o === "mission" ? Object.keys(S.apps).flatMap(k => A(S, k).running && !A(S, k).hidden ? A(S, k).wins.map(w => [k, w]) : []) : (A(S, S.front).wins.map(w => [S.front, w]));
+      return `<div class="mc">${o === "mission" ? `<div class="spaces">${[1, 2, 3].map(n => `<div class="${n === S.space ? "on" : ""}">Desktop ${n}</div>`).join("")}</div>` : `<div class="cap">${APP_NAME[S.front]}</div>`}<div class="thumbs">${wins.map(([k, w]) => `<div class="thumb"><b>${esc(APP_NAME[k])} — ${esc(w.kind === "safari" ? (w.tabs[w.active] || {}).title || "" : w.kind === "textedit" ? w.name : baseOf(w.path))}</b></div>`).join("") || '<div class="cap">No open windows</div>'}</div></div>`;
+    }
+    case "forcequit": {
+      const apps = S.mru.filter(k => A(S, k).running);
+      return `<div class="ov">${panel("Force Quit Applications", `<ul>${apps.map((k, i) => `<li class="${k === apps.find(x => x !== "finder") ? "on" : ""}">${APP_NAME[k]}</li>`).join("")}</ul>`, [["Cancel"], ["Force Quit", 1]])}</div>`;
+    }
+    case "lock": return `<div class="lock" data-unlock="1"><div>${new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</div><div class="t">${new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}</div><div class="avatar"></div><div>alex</div><small>Press any key to unlock</small></div>`;
+    case "logout": return `<div class="ov scrim">${panel("Are you sure you want to quit all applications and log out now?", `<small>You'll be logged out automatically in 60 seconds.</small>`, [["Cancel"], ["Log Out", 1]])}</div>`;
+    case "emoji": return `<div class="emoji">${"😀😂🥲😍🤔😎🙌👍🎉🔥✨❤️☕️🍕🌍🚀🐶🐱🌸⚽️🎧📚✈️💡".match(/\p{Extended_Pictographic}️?/gu).map(e => `<span data-emoji="${e}">${e}</span>`).join("")}</div>`;
+    case "notif": return `<div class="side-panel"><div class="card"><b>Calendar</b><small>Dentist · tomorrow 09:30</small></div><div class="card"><b>Messages</b><small>Sam: Are we still on for Friday?</small></div><div class="card"><b>Weather</b><small>Zurich · 9° and cloudy</small></div></div>`;
+    case "control": return `<div class="side-panel"><div class="cc-grid"><div class="card"><b>Wi-Fi</b><small>Home</small></div><div class="card"><b>Bluetooth</b><small>On</small></div><div class="card"><b>AirDrop</b><small>Contacts only</small></div><div class="card"><b>Focus</b><small>Off</small></div></div><div class="card">Display<div class="slider"><i></i></div></div><div class="card">Sound<div class="slider"><i style="right:60%"></i></div></div></div>`;
+    case "quicknote": return `<div class="quicknote"><b>Quick Note</b><br><span class="caret"></span></div>`;
+    case "cross": return `<div class="cross ${S.ov.mode === "window" ? "window" : ""}" data-shoot="1"><span class="tip">${S.ov.mode === "window" ? "📷 Click a window to capture it · Esc to cancel" : "Drag to select · Space for window · Esc to cancel"}${S.ov.clip ? " · to clipboard" : ""}</span></div>`;
+    case "shotbar": return `<div class="shotbar"><span>▭ Entire screen</span><span>▢ Window</span><span>⬚ Selection</span><span>● Record screen</span><span>Options ▾</span><b>Capture</b></div>`;
+    case "settings": return `<div class="ov">${panel(`${esc(S.ov.app || "")} Settings`, `<div style="display:flex;gap:1.4em;color:var(--win-muted)"><span>General</span><span>Tabs</span><span>Privacy</span><span>Advanced</span></div><div style="margin-top:1em">Open new windows with: <b>Start Page</b></div>`, [["Done", 1]])}</div>`;
+    case "save": return `<div class="ov scrim" style="align-items:flex-start;padding-top:12%">${panel("Save As", `<div class="field">${esc(S.ov.name)}</div><div style="margin-top:.6em">Where: <b>Documents</b></div>`, [["Cancel"], ["Save", 1]])}</div>`;
+    case "saveas": return `<div class="ov scrim" style="align-items:flex-start;padding-top:12%">${panel("Duplicate", `<div class="field">${esc((D(S) || {}).name || "Untitled")} copy</div>`, [["Cancel"], ["Save", 1]])}</div>`;
+    case "print": return `<div class="ov scrim">${panel("Print", `<div style="display:flex;gap:1.2em"><div style="width:7em;height:9em;background:#fff;border:1px solid var(--win-line)"></div><div>Printer: <b>Office Printer</b><br>Copies: 1<br>Pages: All</div></div>`, [["Cancel"], ["Print", 1]])}</div>`;
+    case "open": return `<div class="ov scrim">${panel("Open", `<ul>${(S.fs[HOME + "/Documents"] || []).map((f, i) => `<li class="${i ? "" : "on"}">${esc(f.name)}</li>`).join("")}</ul>`, [["Cancel"], ["Open", 1]])}</div>`;
+    case "dict": return `<div class="dict">${panel(esc(S.ov.word), `<small style="color:var(--win-muted)">Dictionary</small><p style="margin:.4em 0 0">Looked up in the built-in dictionary. On a real Mac this shows the definition, thesaurus and Wikipedia.</p>`, [])}</div>`;
+    case "quicklook": return `<div class="ov scrim"><div class="panel" style="width:50%"><h4>${esc(S.ov.name)}</h4><div style="aspect-ratio:4/3;border-radius:.4em;background:${/\.(jpg|png|heic)$/i.test(S.ov.name) ? "linear-gradient(160deg,#7fb8e8,#f2c48b)" : "var(--win-bar)"}"></div></div></div>`;
+    case "info": return `<div class="ov">${panel(`${esc(S.ov.name)} Info`, `<div>Kind: ${S.ov.dir ? "Folder" : esc((S.ov.name.split(".").pop() || "").toUpperCase()) + " file"}<br>Size: 184 KB<br>Where: ${esc(S.ov.where)}<br>Created: Today</div>`, [])}</div>`;
+    case "emptytrash": return `<div class="ov scrim">${panel(`Are you sure you want to permanently erase the ${S.trash.length} items in the Trash?`, `<small>You can't undo this action.</small>`, [["Cancel"], ["Empty Trash", 1]])}</div>`;
+    case "connect": return `<div class="ov">${panel("Connect to Server", `<div class="field">smb://</div>`, [["Browse"], ["Cancel"], ["Connect", 1]])}</div>`;
+    case "goto": return `<div class="ov">${panel("Go to Folder", `<div class="field">${esc(S.inputText)}<span class="caret"></span></div><small style="color:var(--win-muted)">e.g. ~/Documents or Pictures</small>`, [["Cancel"], ["Go", 1]])}</div>`;
+  }
+  return "";
+}
+function renderScreen() {
+  const sc = $("screen"); const now = Date.now();
+  sc.classList.toggle("flash", ui.flashUntil > now);
+  const fw = W(S);
+  const fullFront = fw && fw.layout === "full" && S.space === 1 && !S.showDesktop;
+  let h = "";
+  if (!fullFront) {
+    h += `<div class="menubar"><b>${APP_NAME[S.front]}</b><span>File</span><span>Edit</span><span>View</span><span>Window</span><span>Help</span><span class="right">${S.space !== 1 ? `<span class="space-pill">Desktop ${S.space}</span>` : ""}<span>${new Date().toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span></span></div>`;
+  }
+  h += `<div class="desk-icons">${items(S, HOME + "/Desktop").map(f => `<div class="desk-icon"><div class="doc ${/png|jpg/i.test(f.name) ? "img" : ""}"></div>${esc(f.name)}</div>`).join("")}</div>`;
+  if (S.space !== 1) h += `<div class="space-label">Desktop ${S.space}</div>`;
+  else if (!S.showDesktop) {
+    for (const k of [...S.mru].reverse()) {
+      const a = A(S, k); if (!a.running || a.hidden || !a.wins.length) continue;
+      if (k === S.front) continue;
+      h += renderWin(k, a.wins[Math.min(a.front, a.wins.length - 1)], false);
+    }
+    if (fw) h += renderWin(S.front, fw, true);
+  }
+  if (!fullFront) {
+    const mins = Object.keys(S.apps).flatMap(k => A(S, k).min.map(w => [k, w]));
+    h += `<div class="dock">${["finder", "safari", "textedit"].map(k => `<div class="app ${dockIcon[k][0]} ${A(S, k).running ? "run" : ""}" data-app="${k}" title="${APP_NAME[k]}">${dockIcon[k][1]}</div>`).join("")}<div class="app ic-notes" title="Notes"></div><span class="sep"></span>${mins.map(([k, w]) => `<div class="mini" data-app="${k}">${esc(APP_NAME[k])}</div>`).join("")}<div class="app ic-trash" title="Trash">${S.trash.length ? "▤" : "▢"}</div></div>`;
+  }
+  h += renderOverlay();
+  if (ui.switcherUntil > now) h += `<div class="ov"><div class="switcher">${S.mru.filter(k => A(S, k).running).map((k, i) => `<div class="app ${dockIcon[k][0]} ${i === 0 ? "on" : ""}">${dockIcon[k][1]}</div>`).join("")}</div></div>`;
+  if (ui.toastUntil > now && ui.toast) h += `<div class="toast">${ui.toastThumb ? '<span class="thumbimg"></span>' : ""}<span>${esc(ui.toast)}</span></div>`;
+  sc.innerHTML = h;
+  if (ui.flashUntil > now) setTimeout(() => sc.classList.remove("flash"), ui.flashUntil - now);
 }
 
-function showVerdict(ok, revealed) {
-  const card = $("card"), v = $("verdict");
-  card.classList.toggle("good", ok); card.classList.toggle("bad", !ok);
-  const answers = current.answers.map(comboHTML).join('<span class="or">or</span>');
-  v.className = "verdict " + (ok ? "good" : "bad");
-  v.innerHTML = ok
-    ? `<span class="line">Correct</span>${current.answers.length > 1 ? `<div class="answers"><span class="or">All accepted:</span>${answers}</div>` : ""}`
-    : `<span class="line">${revealed ? "Here it is" : "Not quite"}</span><div class="answers">${answers}</div><span class="practice">Type it once to lock it in, or press Return to move on.</span>`;
-  v.hidden = false;
-  if (current.note) { $("note").textContent = current.note; $("note").hidden = false; }
-  $("btnNext").hidden = false;
-  $("btnReveal").hidden = true;
-  $("btnClear").hidden = true;
-  renderStats(); renderChips(); renderSheet();
-}
-
-function reveal() {
-  if (phase !== "ask") return;
-  phase = "result";
-  session.total++; session.streak = 0;
-  boxes[current.id] = 0; store.set("mst.boxes", boxes);
-  sticky.clear(); renderSlot();
-  showVerdict(false, true);
-}
-
-// ---- keyboard capture ----
+/* ================= key capture ================= */
+let sticky = new Set(), held = new Set(), tapCandidate = null, lastPressed = "";
 const MOD_FROM_KEY = { Meta: "cmd", OS: "cmd", Alt: "opt", Control: "ctrl", Shift: "shift", Fn: "fn" };
-const NAMED = {
-  " ": "Space", Tab: "Tab", Enter: "Return", Backspace: "Delete", Delete: "Delete", Escape: "Esc",
-  ArrowLeft: "Left", ArrowRight: "Right", ArrowUp: "Up", ArrowDown: "Down",
-};
-const CODE_MAP = {
-  Backquote: "`", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]", Backslash: "\\",
-  Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/", IntlBackslash: "<", Space: "Space",
-};
+const NAMED = { " ": "Space", Tab: "Tab", Enter: "Return", Backspace: "Delete", Escape: "Esc", ArrowLeft: "Left", ArrowRight: "Right", ArrowUp: "Up", ArrowDown: "Down" };
+const FN_NAMED = { Delete: "Delete", Home: "Left", End: "Right", PageUp: "Up", PageDown: "Down" };
+const CODE_MAP = { Backquote: "`", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]", Backslash: "\\", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/", IntlBackslash: "<" };
 function keyFromEvent(e) {
-  if (NAMED[e.key]) return NAMED[e.key];
+  if (NAMED[e.key]) return { key: NAMED[e.key] };
+  if (FN_NAMED[e.key]) return { key: FN_NAMED[e.key], fn: true };
   const physicalMods = e.metaKey || e.altKey || e.ctrlKey || e.shiftKey;
-  if (e.key.length === 1 && !physicalMods) return e.key.toUpperCase();
-  // With modifiers held (or dead keys), e.key turns into symbols like "£" — fall back to the physical key.
-  let m = /^Key([A-Z])$/.exec(e.code); if (m) return m[1];
-  m = /^Digit(\d)$/.exec(e.code); if (m) return m[1];
-  if (CODE_MAP[e.code]) return CODE_MAP[e.code];
-  return e.key.length === 1 ? e.key.toUpperCase() : null;
+  if (e.key.length === 1 && !physicalMods) return { key: /[a-z]/.test(e.key) ? e.key.toUpperCase() : e.key };
+  let m = /^Key([A-Z])$/.exec(e.code); if (m) return { key: m[1] };
+  m = /^Digit(\d)$/.exec(e.code); if (m) return { key: m[1] };
+  if (CODE_MAP[e.code]) return { key: CODE_MAP[e.code] };
+  return e.key.length === 1 ? { key: e.key.toUpperCase() } : null;
 }
-
+function press(mods, key) {
+  const id = cid(mods, key); lastPressed = id;
+  sticky.clear();
+  if (run.done) { if (key === "Return" && !mods.size && stageIdx + 1 < STAGES.length) startStage(stageIdx + 1); else renderPad(); return; }
+  act(id, { mods, key });
+}
 window.addEventListener("keydown", e => {
   if (e.isComposing) return;
-  // Let normal keyboard navigation work while the cheat sheet summary is focused.
-  if (document.activeElement && document.activeElement.tagName === "SUMMARY" && (e.key === "Enter" || e.key === " ")) return;
+  const ae = document.activeElement;
+  if (ae && ae.tagName === "SUMMARY" && (e.key === "Enter" || e.key === " ")) return;
   e.preventDefault();
-  if (e.repeat) return;
+  if (e.repeat && MOD_FROM_KEY[e.key]) return;
   const mod = MOD_FROM_KEY[e.key];
-  if (mod) { held.add(mod); tapCandidate = mod; renderSlot(); return; }
+  if (mod) { held.add(mod); tapCandidate = mod; renderPad(); return; }
   tapCandidate = null;
-  if (phase === "result" && e.key === "Enter") { showCard(); return; }
-  const key = keyFromEvent(e);
-  if (!key) return;
+  const k = keyFromEvent(e); if (!k) return;
   const mods = new Set(sticky);
-  if (e.metaKey) mods.add("cmd");
-  if (e.altKey) mods.add("opt");
-  if (e.ctrlKey) mods.add("ctrl");
-  if (e.shiftKey) mods.add("shift");
-  if (held.has("fn")) mods.add("fn");
-  submit({ mods, key });
+  if (e.metaKey) mods.add("cmd"); if (e.altKey) mods.add("opt"); if (e.ctrlKey) mods.add("ctrl"); if (e.shiftKey) mods.add("shift");
+  if (held.has("fn") || k.fn) mods.add("fn");
+  press(mods, k.key);
 }, true);
-
 window.addEventListener("keyup", e => {
-  const mod = MOD_FROM_KEY[e.key];
-  if (!mod) return;
-  e.preventDefault();
-  held.delete(mod);
-  if (tapCandidate === mod) { sticky.has(mod) ? sticky.delete(mod) : sticky.add(mod); }
-  tapCandidate = null;
-  renderSlot();
+  const mod = MOD_FROM_KEY[e.key]; if (!mod) return;
+  e.preventDefault(); held.delete(mod);
+  if (tapCandidate === mod) sticky.has(mod) ? sticky.delete(mod) : sticky.add(mod);
+  tapCandidate = null; renderPad();
 }, true);
-window.addEventListener("blur", () => { held.clear(); tapCandidate = null; renderSlot(); });
+window.addEventListener("blur", () => { held.clear(); tapCandidate = null; renderPad(); });
 
-// ---- on-screen pad ----
-$("modRow").innerHTML = MOD_ORDER.map(m =>
-  `<button type="button" data-mod="${m}" aria-pressed="false" aria-label="${MOD_NAME[m]}" title="${MOD_NAME[m]}">${keyCap(MOD_GLYPH[m], m === "fn")}</button>`
-).join("");
+/* ================= pad, clicks ================= */
+$("modRow").innerHTML = MOD_ORDER.map(m => `<button type="button" data-mod="${m}" aria-pressed="false" aria-label="${MOD_NAME[m]}" title="${MOD_NAME[m]}">${kc(MOD_GLYPH[m], m === "fn")}</button>`).join("");
 const PAD_KEYS = ["Esc", "Tab", "Space", "Return", "Delete", "Left", "Up", "Down", "Right", "`"];
-$("keyRow").innerHTML = PAD_KEYS.map(k =>
-  `<button type="button" data-key="${escapeHTML(k)}" aria-label="${k}">${keyCap(escapeHTML(KEY_GLYPH[k] || k), WORD_KEYS.has(k))}</button>`
-).join("");
+$("keyRow").innerHTML = PAD_KEYS.map(k => `<button type="button" data-key="${esc(k)}" aria-label="${k}">${kc(KEY_GLYPH[k] || k, WORD_KEYS.has(k))}</button>`).join("");
+function renderPad() {
+  document.querySelectorAll("#modRow button").forEach(b => { b.setAttribute("aria-pressed", sticky.has(b.dataset.mod)); b.classList.toggle("held", held.has(b.dataset.mod)); });
+  const armed = MOD_ORDER.filter(m => sticky.has(m) || held.has(m));
+  $("pressed").innerHTML = armed.length ? `Armed: ${armed.map(m => kc(MOD_GLYPH[m], m === "fn", 1)).join("")} + next key` : lastPressed ? `Last: ${comboHTML(lastPressed, 1)}` : "";
+}
+document.addEventListener("mousedown", e => { if (e.target.closest("button, .screen")) e.preventDefault(); });
+$("modRow").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const m = b.dataset.mod; sticky.has(m) ? sticky.delete(m) : sticky.add(m); renderPad(); });
+$("keyRow").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; press(new Set(sticky), b.dataset.key); });
+$("stages").addEventListener("click", e => { const b = e.target.closest("[data-stage]"); if (b) startStage(+b.dataset.stage); });
+$("brief").addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const a = b.dataset.act;
+  if (a === "hint") { if (!hintShown) { hintShown = true; run.hints++; } renderBrief(); }
+  if (a === "show") showMe();
+  if (a === "reset") resetStep();
+  if (a === "next") startStage(stageIdx + 1);
+  if (a === "replay") startStage(stageIdx);
+});
+$("screen").addEventListener("click", e => {
+  if (run.done || advancing) return;
+  const t = e.target;
+  const after = ev => { let ok = false; try { ok = !!task().goal(S, ev, X); } catch {} if (ok) complete(); else render(); };
+  if (t.closest("[data-unlock]")) { S.overlay = null; return after(EV.unlock); }
+  if (t.closest("[data-shoot]")) { const clip = S.ov.clip; S.overlay = null; S.ov = {}; if (clip) { S.clip = { image: "Selection" }; ui.flashUntil = Date.now() + 400; toast("Copied to the clipboard"); } else saveShot(S); return after(EV.shotTaken); }
+  const em = t.closest("[data-emoji]"); if (em) { const d = D(S); if (d) ins(d, em.dataset.emoji); S.overlay = null; return after(EV.type); }
+  const ap = t.closest("[data-app]"); if (ap) { activate(S, ap.dataset.app, true); return after(EV.launch); }
+  const tb = t.closest("[data-tab]"); if (tb) { const w = SW(S); if (w) w.active = +tb.dataset.tab; return after(EV.tabN); }
+  const fl = t.closest("[data-file]"); if (fl) { const w = FW(S); if (w) { w.selName = fl.dataset.file; w.selAll = false; } return after(EV.selMove); }
+  const go = t.closest("[data-go]"); if (go) { const w = FW(S); if (w) goPath(S, w, go.dataset.go); return after(EV.went); }
+  if (S.overlay && t.closest(".ov, .mc")) { S.overlay = null; S.ov = {}; return after(EV.close); }
+});
 
-// Clicking on-screen buttons shouldn't steal focus (Space/Return would then "press" them).
-document.querySelectorAll(".pad button, .card .btn, .chip").forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
-$("modRow").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  const m = b.dataset.mod; sticky.has(m) ? sticky.delete(m) : sticky.add(m); renderSlot();
-});
-$("keyRow").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  submit({ mods: new Set(sticky), key: b.dataset.key });
-});
-$("chips").addEventListener("mousedown", e => e.preventDefault());
-$("chips").addEventListener("click", e => {
-  const b = e.target.closest(".chip"); if (!b) return;
-  const c = b.dataset.cat;
-  if (active.has(c) && active.size === 1) return;   // keep at least one deck
-  active.has(c) ? active.delete(c) : active.add(c);
-  store.set("mst.cats", [...active]);
-  renderChips();
-  if (current && !active.has(current.cat)) showCard();
-});
-$("btnNext").addEventListener("click", showCard);
-$("btnReveal").addEventListener("click", reveal);
-$("btnClear").addEventListener("click", () => { sticky.clear(); renderSlot(); });
-$("btnReset").addEventListener("click", () => { $("resetConfirm").hidden = false; });
-$("btnResetYes").addEventListener("click", () => {
-  boxes = {}; store.set("mst.boxes", boxes); session = { right: 0, total: 0, streak: 0 };
-  $("resetConfirm").hidden = true; renderStats(); renderChips(); renderSheet(); showCard();
-});
+/* ================= cheat sheet ================= */
+$("sheetBody").innerHTML = STAGES.map(st => {
+  const seen = new Set();
+  const rows = st.tasks.filter(t => t.k && !t.type).filter(t => { const k = norm(t.k.split("|")[0]); if (seen.has(k)) return false; seen.add(k); return true; });
+  return `<h3>${esc(st.name)}</h3><ul>${rows.map(t => `<li><span>${esc(t.t.replace(/^(“[^”]+” is selected\. |You're on “Inbox”\. |Your cursor is in the middle of line 2\. |beach\.jpg is selected\. |notes\.txt is selected\. |Safari now has two windows\. |An app has frozen\. |Oops\. |Changed your mind\. )/, ""))}</span>${combosHTML(t.k.split("|").slice(0, 2), 1)}</li>`).join("")}</ul>`;
+}).join("");
 
-renderChips(); renderStats(); renderSheet(); showCard();
+window.__parcours = { STAGES, pos: () => ({ stageIdx, step, done: run.done, mistakes: run.mistakes, hints: run.hints }), start: startStage };
+const saved = store.get("parcours.stage", 0);
+startStage(saved >= 0 && saved < STAGES.length ? saved : 0);
 })();
 </script>
